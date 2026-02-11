@@ -1,0 +1,49 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: skillcraft_back
+    env_file:
+      - src/.env
+    volumes:
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/php.ini:ro
+      - ./src:/var/www
+    networks:
+      - skillcraft
+
+  nginx:
+    image: nginx:alpine
+    container_name: skillcraft_nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./src:/var/www
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+    networks:
+      - skillcraft
+
+  postgres:
+    image: postgres:18-alpine
+    container_name: skillcraft_postgres
+    environment:
+      POSTGRES_DB: skillcraft
+      POSTGRES_USER: skillcraft
+      POSTGRES_PASSWORD: secret
+      POSTGRES_HOST_AUTH_METHOD: scram-sha-256
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - skillcraft
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  skillcraft:
+    driver: bridge
