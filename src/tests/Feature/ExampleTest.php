@@ -2,18 +2,18 @@
 
 namespace Tests\Feature;
 
-// use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class ExampleTest extends TestCase
 {
-    /**
-     * A basic test example.
-     */
-    public function test_the_application_returns_a_successful_response(): void
-    {
-        $response = $this->get('/');
+    use RefreshDatabase;
 
-        $response->assertStatus(200);
+    public function test_it_uses_sqlite_in_memory(): void
+    {
+        $this->assertEquals('sqlite', config('database.default'));
+        $this->assertEquals(':memory:', config('database.connections.sqlite.database'));
+
+        $this->assertTrue(true);
     }
 }

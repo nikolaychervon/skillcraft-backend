@@ -10,7 +10,7 @@ class UserRepository
 
     public function findById(int $id): ?User
     {
-        return self::MODEL::query()->findOrFail($id);
+        return self::MODEL::query()->find($id);
     }
 
     public function findByEmail(string $email): ?User
