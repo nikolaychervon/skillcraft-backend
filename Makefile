@@ -122,6 +122,11 @@ restart:
 	docker-compose restart
 	@echo "$(GREEN)  ✅ Контейнеры перезапущены$(RESET)"
 
+test:
+	@echo "$(YELLOW)  🔄 Запуск тестов...$(RESET)"
+	$(ARTISAN) test
+	@echo "$(GREEN)  ✅ Все тесты пройдены (если ошибок нет, ты молодец)$(RESET)"
+
 # ❓ Помощь
 help:
 	@echo "$(BOLD)$(CYAN)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(RESET)"
@@ -144,6 +149,7 @@ help:
 	@echo "$(BOLD)$(MAGENTA)  Утилиты:$(RESET)"
 	@echo "    $(CYAN)make composer ...$(RESET)  - Composer команды"
 	@echo "    $(CYAN)make artisan ...$(RESET)   - Artisan команды"
+	@echo "    $(CYAN)make test$(RESET)   		 - Запуск тестов"
 	@echo "$(BOLD)$(CYAN)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(RESET)\n"
 
 # Для поддержки аргументов в composer и artisan
