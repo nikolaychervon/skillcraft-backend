@@ -3,12 +3,12 @@ services:
     build:
       context: .
       dockerfile: docker/php/Dockerfile
-    container_name: skillcraft_back
+    container_name: gradeup_back
     volumes:
       - ./docker/php/php.ini:/usr/local/etc/php/conf.d/php.ini:ro
       - ./src:/var/www
     networks:
-      - skillcraft
+      - gradeup
     command: php-fpm
     depends_on:
       postgres:
@@ -20,14 +20,14 @@ services:
     build:
       context: .
       dockerfile: docker/php/Dockerfile
-    container_name: skillcraft_worker
+    container_name: gradeup_worker
     env_file:
       - src/.env
     volumes:
       - ./docker/php/php.ini:/usr/local/etc/php/conf.d/php.ini:ro
       - ./src:/var/www
     networks:
-      - skillcraft
+      - gradeup
     command: php artisan horizon
     restart: unless-stopped
     depends_on:
@@ -38,18 +38,18 @@ services:
 
   redis:
     image: redis:7-alpine
-    container_name: skillcraft_redis
+    container_name: gradeup_redis
     ports:
       - "6379:6379"
     volumes:
       - redis_data:/data
     networks:
-      - skillcraft
+      - gradeup
     restart: unless-stopped
 
   nginx:
     image: nginx:alpine
-    container_name: skillcraft_nginx
+    container_name: gradeup_nginx
     ports:
       - "80:80"
     volumes:
@@ -58,14 +58,14 @@ services:
     depends_on:
       - app
     networks:
-      - skillcraft
+      - gradeup
 
   postgres:
     image: postgres:18-alpine
-    container_name: skillcraft_postgres
+    container_name: gradeup_postgres
     environment:
-      POSTGRES_DB: skillcraft
-      POSTGRES_USER: skillcraft
+      POSTGRES_DB: gradeup
+      POSTGRES_USER: gradeup
       POSTGRES_PASSWORD: secret
       POSTGRES_HOST_AUTH_METHOD: scram-sha-256
     ports:
@@ -73,10 +73,10 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
-      - skillcraft
+      - gradeup
     restart: unless-stopped
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U skillcraft -d skillcraft" ]
+      test: [ "CMD-SHELL", "pg_isready -U gradeup -d gradeup" ]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -84,20 +84,20 @@ services:
 
   mailhog:
     image: mailhog/mailhog
-    container_name: skillcraft_mailhog
+    container_name: gradeup_mailhog
     ports:
       - "1025:1025"
       - "8025:8025"
     networks:
-      - skillcraft
+      - gradeup
     restart: unless-stopped
 
 volumes:
   postgres_data:
-    name: skillcraft_postgres_data
+    name: gradeup_postgres_data
   redis_data:
-    name: skillcraft_redis_data
+    name: gradeup_redis_data
 
 networks:
-  skillcraft:
+  gradeup:
     driver: bridge

@@ -5,10 +5,10 @@ use App\Notifications\User\VerifyEmailForRegisterNotification;
 
 return [
     VerifyEmailForRegisterNotification::class => [
-        'subject' => 'SkillCraft registration confirmation',
+        'subject' => 'GradeUP registration confirmation',
         'greeting' => 'Hello, :name!',
         'lines_1' => [
-            'You received this email because you registered on the SkillCraft platform.',
+            'You received this email because you registered on the GradeUP platform.',
             'To activate your account, please confirm your email:',
         ],
         'action' => [
@@ -21,7 +21,7 @@ return [
         ],
     ],
     PasswordResetNotification::class => [
-        'subject' => 'Resetting your SkillCraft password',
+        'subject' => 'Resetting your GradeUP password',
         'greeting' => 'Hello!',
         'lines_1' => [
             'You are receiving this email because we have received a request to reset the password for your account.',

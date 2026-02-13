@@ -5,10 +5,10 @@ use App\Notifications\User\VerifyEmailForRegisterNotification;
 
 return [
     VerifyEmailForRegisterNotification::class => [
-        'subject' => 'Подтверждение регистрации на SkillCraft',
+        'subject' => 'Подтверждение регистрации на GradeUP',
         'greeting' => 'Здравствуйте, :name!',
         'lines_1' => [
-            'Вы получили это письмо, потому что зарегистрировались на платформе SkillCraft.',
+            'Вы получили это письмо, потому что зарегистрировались на платформе GradeUP.',
             'Для активации аккаунта подтвердите ваш email:',
         ],
         'action' => [
@@ -21,7 +21,7 @@ return [
         ],
     ],
     PasswordResetNotification::class => [
-        'subject' => 'Сброс пароля на SkillCraft',
+        'subject' => 'Сброс пароля на GradeUP',
         'greeting' => 'Здравствуйте!',
         'lines_1' => [
             'Вы получили это письмо, потому что мы получили запрос на сброс пароля для вашей учётной записи.',

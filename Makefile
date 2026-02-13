@@ -13,14 +13,14 @@ CYAN = \033[36m
 WHITE = \033[37m
 
 # Конфигурация
-APP = skillcraft_back
+APP = gradeup_back
 PHP = docker exec -it $(APP)
 ARTISAN = $(PHP) php artisan
 
 # 🚀 Полная установка проекта с нуля
 setup:
 	@echo "$(BOLD)$(CYAN)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(RESET)"
-	@echo "$(BOLD)$(BG_BLUE)$(WHITE)  🚀 SkillCraft Backend — полная установка  $(RESET)"
+	@echo "$(BOLD)$(BG_BLUE)$(WHITE)  🚀 GradeUP Backend — полная установка  $(RESET)"
 	@echo "$(BOLD)$(CYAN)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(RESET)"
 	make env
 	make composer-install
@@ -130,7 +130,7 @@ test:
 # ❓ Помощь
 help:
 	@echo "$(BOLD)$(CYAN)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(RESET)"
-	@echo "$(BOLD)$(BG_CYAN)$(WHITE)  📋 SkillCraft — доступные команды  $(RESET)"
+	@echo "$(BOLD)$(BG_CYAN)$(WHITE)  📋 GradeUP — доступные команды  $(RESET)"
 	@echo "$(BOLD)$(CYAN)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(RESET)"
 	@echo "$(BOLD)$(GREEN)  Установка и настройка:$(RESET)"
 	@echo "    $(CYAN)make setup$(RESET)         - Полная установка проекта"
