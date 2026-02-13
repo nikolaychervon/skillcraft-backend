@@ -39,6 +39,7 @@ class AuthorizeUserActionTest extends TestCase
 
     public function test_it_returns_token_on_successful_login(): void
     {
+        $this->user->markEmailAsVerified();
         $token = $this->action->run('ivan@example.com', $this->password);
 
         $this->assertIsString($token);

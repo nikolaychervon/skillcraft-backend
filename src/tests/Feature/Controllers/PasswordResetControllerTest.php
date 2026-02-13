@@ -44,6 +44,7 @@ class PasswordResetControllerTest extends TestCase
         );
 
         $this->user = $createUserAction->run($dto);
+        $this->user->markEmailAsVerified();
     }
 
     public function test_it_sends_password_reset_link_successfully(): void

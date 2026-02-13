@@ -7,8 +7,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
 
-    Route::post('login', [AuthController::class, 'login']);
-    Route::post('register', [AuthController::class, 'register']);
+    Route::post('login', [AuthController::class, 'login'])
+        ->middleware('throttle.after:1,3');
+    Route::post('register', [AuthController::class, 'register'])
+        ->middleware('throttle.after:3,60');
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('logout', [AuthController::class, 'logout']);
@@ -21,7 +23,7 @@ Route::prefix('v1')->group(function () {
             ->middleware('signed');
 
         Route::post('/resend', [EmailVerificationController::class, 'resend'])
-            ->middleware('throttle:1,1');
+            ->middleware('throttle.after:1,3');
     });
 
     Route::post('/forgot-password', [PasswordResetController::class, 'forgot'])

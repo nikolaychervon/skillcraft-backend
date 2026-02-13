@@ -2,9 +2,12 @@
 
 namespace Tests\Feature\Controllers;
 
+use App\Actions\User\CreateNewUserAction;
+use App\DTO\User\CreatingUserDTO;
 use App\Exceptions\User\Auth\IncorrectLoginDataException;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class AuthControllerTest extends TestCase
@@ -71,6 +74,39 @@ class AuthControllerTest extends TestCase
         ]);
     }
 
+    public function test_it_rate_limits_registration_requests(): void
+    {
+        for ($i = 1; $i <= 3; $i++) {
+            $response = $this->postJson('/api/v1/register', [
+                'first_name' => 'Иван',
+                'last_name' => 'Петров',
+                'email' => "blocked@example.com",
+                'unique_nickname' => "user{$i}",
+                'password' => $this->password,
+                'password_confirmation' => $this->password,
+            ]);
+
+            if ($i < 3) {
+                $response->assertStatus(201);
+            } else {
+                // Третий запрос — последний разрешённый
+                $response->assertStatus(201);
+            }
+        }
+
+        // Четвёртый запрос — должен быть заблокирован
+        $response = $this->postJson('/api/v1/register', [
+            'first_name' => 'Иван',
+            'last_name' => 'Петров',
+            'email' => 'blocked@example.com',
+            'unique_nickname' => 'blocked_user',
+            'password' => $this->password,
+            'password_confirmation' => $this->password,
+        ]);
+
+        $response->assertStatus(429);
+    }
+
     public function test_it_validates_required_fields_on_register(): void
     {
         $response = $this->postJson(self::REGISTER_API, []);
@@ -109,13 +145,18 @@ class AuthControllerTest extends TestCase
 
     public function test_it_logins_user_successfully(): void
     {
-        $this->postJson(self::REGISTER_API, [
-            'first_name' => 'Иван',
-            'last_name' => 'Петров',
-            'email' => $this->email,
-            'unique_nickname' => 'ivan_petrov',
-            'password' => $this->password,
-        ]);
+        $createUserAction = app(CreateNewUserAction::class);
+        $dto = new CreatingUserDTO(
+            firstName: 'Иван',
+            lastName: 'Петров',
+            email: $this->email,
+            uniqueNickname: 'verify_controller',
+            password: $this->password,
+            middleName: null
+        );
+
+        $user = $createUserAction->run($dto);
+        $user->markEmailAsVerified();
 
         $response = $this->postJson(self::LOGIN_API, [
             'email' => $this->email,
@@ -134,6 +175,28 @@ class AuthControllerTest extends TestCase
             ]);
 
         $this->assertNotEmpty($response->json('data.token'));
+    }
+
+    public function test_it_logins_user_error_without_email_verification(): void
+    {
+        $this->postJson(self::REGISTER_API, [
+            'first_name' => 'Иван',
+            'last_name' => 'Петров',
+            'email' => $this->email,
+            'unique_nickname' => 'ivan_petrov',
+            'password' => $this->password,
+        ]);
+
+        $response = $this->postJson(self::LOGIN_API, [
+            'email' => $this->email,
+            'password' => $this->password,
+        ]);
+
+        $response->assertStatus(401)
+            ->assertJson([
+                'success' => false,
+                'message' => __('exceptions.' . IncorrectLoginDataException::class),
+            ]);
     }
 
     public function test_it_returns_error_on_invalid_login(): void

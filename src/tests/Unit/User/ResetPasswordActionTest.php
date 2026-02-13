@@ -47,6 +47,7 @@ class ResetPasswordActionTest extends TestCase
         );
 
         $this->user = $createUserAction->run($dto);
+        $this->user->markEmailAsVerified();
     }
 
     public function test_it_resets_password_successfully(): void

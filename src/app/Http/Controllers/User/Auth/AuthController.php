@@ -3,21 +3,20 @@
 namespace App\Http\Controllers\User\Auth;
 
 use App\Actions\User\Auth\AuthorizeUserAction;
-use App\Actions\User\CreateNewUserAction;
+use App\Actions\User\Auth\RegisterUserAction;
 use App\DTO\User\CreatingUserDTO;
 use App\Exceptions\User\Auth\IncorrectLoginDataException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\Auth\LoginRequest;
 use App\Http\Requests\User\Auth\RegisterRequest;
 use App\Http\Responses\ApiResponse;
-use App\Notifications\User\VerifyEmailForRegisterNotification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
     public function __construct(
-        private CreateNewUserAction $createNewUserAction,
+        private RegisterUserAction $registerUserAction,
         private AuthorizeUserAction $authorizeUserAction,
     ) {
     }
@@ -46,8 +45,7 @@ class AuthController extends Controller
             middleName: $request->getMiddleName(),
         );
 
-        $user = $this->createNewUserAction->run($creatingUserDTO);
-        $user->notify(new VerifyEmailForRegisterNotification());
+        $user = $this->registerUserAction->run($creatingUserDTO);
 
         return ApiResponse::success(
             message: __('messages.email-verify'),
