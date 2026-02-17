@@ -1,7 +1,7 @@
 <?php
 
-use App\Notifications\User\PasswordResetNotification;
-use App\Notifications\User\VerifyEmailForRegisterNotification;
+use App\Infrastructure\Notifications\Auth\PasswordResetNotification;
+use App\Infrastructure\Notifications\Auth\VerifyEmailForRegisterNotification;
 
 return [
     VerifyEmailForRegisterNotification::class => [

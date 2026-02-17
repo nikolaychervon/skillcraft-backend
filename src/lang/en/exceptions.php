@@ -1,14 +1,14 @@
 <?php
 
-use App\Exceptions\Http\NotFoundHttpException;
-use App\Exceptions\Http\TooManyRequestsHttpException;
-use App\Exceptions\Http\UnauthorizedException;
-use App\Exceptions\User\Auth\IncorrectLoginDataException;
-use App\Exceptions\User\Auth\InvalidResetTokenException;
-use App\Exceptions\User\Auth\PasswordResetFailedException;
-use App\Exceptions\User\Email\EmailAlreadyVerifiedException;
-use App\Exceptions\User\Email\InvalidConfirmationLinkException;
-use App\Exceptions\User\UserNotFoundException;
+use App\Application\Shared\Exceptions\Http\NotFoundHttpException;
+use App\Application\Shared\Exceptions\Http\TooManyRequestsHttpException;
+use App\Application\Shared\Exceptions\Http\UnauthorizedException;
+use App\Application\Shared\Exceptions\User\Email\EmailAlreadyVerifiedException;
+use App\Application\Shared\Exceptions\User\Email\InvalidConfirmationLinkException;
+use App\Application\Shared\Exceptions\User\UserNotFoundException;
+use App\Domain\Auth\Exceptions\IncorrectLoginDataException;
+use App\Domain\Auth\Exceptions\InvalidResetTokenException;
+use App\Domain\Auth\Exceptions\PasswordResetFailedException;
 
 return [
     IncorrectLoginDataException::class => 'Incorrect email address or password',

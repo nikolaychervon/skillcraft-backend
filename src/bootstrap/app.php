@@ -1,9 +1,9 @@
 <?php
 
-use App\Exceptions\ApiException;
-use App\Exceptions\Http\NotFoundHttpException;
-use App\Exceptions\Http\TooManyRequestsHttpException;
-use App\Exceptions\Http\UnauthorizedException;
+use App\Application\Shared\Exceptions\ApiException;
+use App\Application\Shared\Exceptions\Http\NotFoundHttpException;
+use App\Application\Shared\Exceptions\Http\TooManyRequestsHttpException;
+use App\Application\Shared\Exceptions\Http\UnauthorizedException;
 use App\Http\Middleware\ThrottleAfterValidationMiddleware;
 use App\Http\Responses\ApiResponse;
 use Illuminate\Auth\AuthenticationException;

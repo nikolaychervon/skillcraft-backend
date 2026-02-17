@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Exceptions\Http\TooManyRequestsHttpException;
+use App\Application\Shared\Exceptions\Http\TooManyRequestsHttpException;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -30,6 +30,11 @@ class ThrottleAfterValidationMiddleware
         return $response;
     }
 
+    /**
+     * @param Request $request
+     * @param string $keyField
+     * @return string
+     */
     private function getKey(Request $request, string $keyField): string
     {
         return self::THROTTLE_KEY . $request->getRequestUri() . '_' . $request->input($keyField) . '_' . $request->ip();

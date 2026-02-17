@@ -1,14 +1,14 @@
 <?php
 
-use App\Http\Controllers\User\Auth\AuthController;
-use App\Http\Controllers\User\Auth\EmailVerificationController;
-use App\Http\Controllers\User\Auth\PasswordResetController;
+use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Auth\EmailVerificationController;
+use App\Http\Controllers\Auth\PasswordResetController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
 
     Route::post('login', [AuthController::class, 'login'])
-        ->middleware('throttle.after:1,3');
+        ->middleware('throttle.after:3,10');
     Route::post('register', [AuthController::class, 'register'])
         ->middleware('throttle.after:3,60');
 
