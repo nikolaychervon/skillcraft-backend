@@ -20,6 +20,6 @@ class EmailChangeVerificationController extends Controller
     public function verify(int $id, string $hash, VerifyEmailChangeAction $action): JsonResponse
     {
         $action->run($id, $hash);
-        return ApiResponse::success(message: __('messages.email-change-confirmed') );
+        return ApiResponse::success(message: __('messages.email-change-confirmed'));
     }
 }
