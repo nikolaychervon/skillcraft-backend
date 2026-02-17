@@ -39,29 +39,37 @@ Horizon: http://localhost/horizon
 ```bash
   gradeup-backend/
     ├── 🐳 docker/ # Настройки контейнеров
+    ├── 🐘 docker-compose.yml # Docker-compose окружение (dev)
+    ├── 📜 Makefile # Команды для управления проектом
     ├── 📁 src/
     │   ├── app/
-    │   │   ├── Application/    # Приложение
-    │   │   │   ├── Auth/           # Аутентификация
-    │   │   │   ├── .../            # Слой для n
-    │   │   │   ├── Shared/         # Слой для общего кода
-    │   │   ├── Domain/         # Бизнес логика
-    │   │   │   ├── Auth/           # Аутентификация
-    │   │   │   ├── .../            # Слой для n
-    │   │   ├── Infrastructure/ # Инфраструктура
-    │   │   │   ├── Auth/           # Аутентификация
-    │   │   │   ├── Notification/   # Уведомления
-    │   │   │   ├── .../            # Слой для n
-    │   │   ├── Http/           # Controllers, Requests, Responses, Middlewares
-    │   │   ├── Models/         # Общие модели
-    │   │   ├── Providers/      # Провайдеры Laravel
-    │   ├── config/   # Конфиги
-    │   ├── database/ # Миграции, Сидеры, Фабрики
-    │   ├── lang/     # Localization (ru/en)
-    │   ├── routes/   # api.php (v1)
-    │   ├── tests/    # Tests
-    │   └── .env (.env.example) # Окружение
-    ├── 🐘 docker-compose.yml # Упаковка контейнеров
-    ├── 📜 Makefile # Команды для управления проектом
+    │   │   ├── Application/                # Слой приложения (use-cases, сборка DTO)
+    │   │   │   ├── Auth/                   # Аутентификация
+    │   │   │   └── Shared/                 # Общие компоненты (DTO, assemblers, exceptions, constants)
+    │   │   ├── Domain/                     # Домен (бизнес-логика)
+    │   │   │   └── Auth/
+    │   │   │       ├── Actions/            # Юзкейсы (Login/Register/Reset/etc)
+    │   │   │       ├── Cache/              # Доменные интерфейсы кеша
+    │   │   │       ├── Constants/          # Доменные константы
+    │   │   │       ├── DTO/                # DTO домена
+    │   │   │       ├── Exceptions/         # Доменные исключения
+    │   │   │       ├── Repositories/       # Доменные интерфейсы репозиториев
+    │   │   │       ├── Services/           # Доменные интерфейсы сервисов (hash/tokens/notify/tx)
+    │   │   │       └── Specifications/     # Спецификации (правила)
+    │   │   ├── Infrastructure/             # Инфраструктура (Laravel/Eloquent/Cache/Notify/DB)
+    │   │   │   ├── Auth/
+    │   │   │   │   ├── Cache/              # Реализации кеша
+    │   │   │   │   ├── Repositories/       # Реализации репозиториев
+    │   │   │   │   └── Services/           # Реализации доменных сервисов
+    │   │   │   └── Notifications/          # Email-уведомления (queued)
+    │   │   ├── Http/                       # Controllers, Requests, Responses, Middlewares
+    │   │   ├── Models/                     # Eloquent модели
+    │   │   └── Providers/                  # Service providers (bindings)
+    │   ├── config/                         # Конфиги Laravel
+    │   ├── database/                       # Миграции, сидеры, фабрики
+    │   ├── lang/                           # Локализация (ru/en)
+    │   ├── routes/                         # Роуты (api.php v1 и т.д.)
+    │   ├── tests/                          # Unit/Feature тесты
+    │   └── .env / .env.example             # Окружение (не коммитим .env)
     └── 📖 README.md # Ты тут :)
 ```
