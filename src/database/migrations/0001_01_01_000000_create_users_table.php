@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('first_name');
             $table->string('last_name');
             $table->string('middle_name')->nullable();
-            $table->enum('level', LevelsConstants::LIST)->default(LevelsConstants::UNSETTED);
             $table->string('unique_nickname')->unique();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();

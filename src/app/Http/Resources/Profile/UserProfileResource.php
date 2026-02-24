@@ -23,7 +23,6 @@ class UserProfileResource extends JsonResource
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
             'middle_name' => $this->middle_name,
-            'level' => $this->level,
             'unique_nickname' => $this->unique_nickname,
             'email' => $this->email,
             'email_verified_at' => $this->email_verified_at?->format('Y-m-d H:i:s'),

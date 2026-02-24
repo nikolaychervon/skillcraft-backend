@@ -63,7 +63,6 @@ class ProfileControllerTest extends TestCase
                     'first_name',
                     'last_name',
                     'middle_name',
-                    'level',
                     'unique_nickname',
                     'email',
                     'email_verified_at',

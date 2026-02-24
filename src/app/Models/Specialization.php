@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 
 /**
  * @property int $id
@@ -15,8 +16,8 @@ use Illuminate\Support\Carbon;
  * @property string $name
  * @property Carbon $created_at
  * @property Carbon $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, Track> $tracks
- * @property-read \Illuminate\Database\Eloquent\Collection<int, ProgrammingLanguage> $programmingLanguages
+ * @property-read Collection<int, Track> $tracks
+ * @property-read Collection<int, ProgrammingLanguage> $programmingLanguages
  */
 class Specialization extends Model
 {
