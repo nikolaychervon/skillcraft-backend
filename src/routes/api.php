@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\PasswordResetController;
+use App\Http\Controllers\Catalog\CatalogController;
 use App\Http\Controllers\Profile\EmailChangeVerificationController;
 use App\Http\Controllers\Profile\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -44,4 +45,9 @@ Route::prefix('v1')->group(function () {
 
     Route::post('/reset-password', [PasswordResetController::class, 'reset'])
         ->middleware('throttle:3,60');
+
+    Route::prefix('catalog')->group(function () {
+        Route::get('specializations', [CatalogController::class, 'specializations']);
+        Route::get('specializations/{id}/languages', [CatalogController::class, 'specializationLanguages']);
+    });
 });

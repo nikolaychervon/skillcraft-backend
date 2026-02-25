@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Domain\Catalog\Cache\CatalogCacheInterface;
+use App\Domain\Catalog\Repositories\SpecializationRepositoryInterface;
 use App\Domain\User\Auth\Cache\PasswordResetTokensCacheInterface;
+use App\Infrastructure\Catalog\Cache\CatalogCache;
+use App\Infrastructure\Catalog\Repositories\CachedSpecializationRepository;
 use App\Domain\User\Auth\Services\HashServiceInterface;
 use App\Domain\User\Auth\Services\NotificationServiceInterface;
 use App\Domain\User\Auth\Services\TokenGeneratorInterface;
@@ -25,6 +29,10 @@ use Illuminate\Support\ServiceProvider;
 class AppServiceProvider extends ServiceProvider
 {
     public $bindings = [
+        // Catalog
+        CatalogCacheInterface::class => CatalogCache::class,
+        SpecializationRepositoryInterface::class => CachedSpecializationRepository::class,
+
         // User aggregate repository
         UserRepositoryInterface::class => UserRepository::class,
 
