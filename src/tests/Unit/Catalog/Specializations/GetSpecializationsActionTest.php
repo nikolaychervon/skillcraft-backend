@@ -4,7 +4,7 @@ namespace Tests\Unit\Catalog\Specializations;
 
 use App\Application\Catalog\GetSpecializations;
 use App\Domain\Catalog\Repositories\SpecializationRepositoryInterface;
-use App\Models\Specialization;
+use App\Domain\Catalog\Specialization;
 use Illuminate\Support\Collection;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
@@ -17,8 +17,8 @@ class GetSpecializationsActionTest extends TestCase
     public function test_it_returns_all_specializations_from_repository(): void
     {
         $specializations = collect([
-            new Specialization(['id' => 1, 'key' => 'frontend', 'name' => 'Frontend']),
-            new Specialization(['id' => 2, 'key' => 'backend', 'name' => 'Backend']),
+            new Specialization(1, 'frontend', 'Frontend'),
+            new Specialization(2, 'backend', 'Backend'),
         ]);
 
         $repo = Mockery::mock(SpecializationRepositoryInterface::class);

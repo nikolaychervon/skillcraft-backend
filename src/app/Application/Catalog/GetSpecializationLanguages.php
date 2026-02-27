@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Application\Catalog;
 
+use App\Domain\Catalog\ProgrammingLanguage;
 use App\Domain\Catalog\Repositories\ProgrammingLanguageRepositoryInterface;
-use App\Models\ProgrammingLanguage;
 use Illuminate\Support\Collection;
 
 final readonly class GetSpecializationLanguages

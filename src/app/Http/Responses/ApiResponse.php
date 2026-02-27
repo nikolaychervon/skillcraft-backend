@@ -30,6 +30,7 @@ final class ApiResponse
         if ($errors !== null) {
             $payload['errors'] = $errors;
         }
+
         return response()->json($payload, self::statusCode($code));
     }
 

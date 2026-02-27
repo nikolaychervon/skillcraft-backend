@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests\Auth;
 
+use App\Http\Requests\Rules\ValidationRules;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\Rules\Password;
 
 class RegisterRequest extends FormRequest
 {
@@ -22,15 +24,12 @@ class RegisterRequest extends FormRequest
                 Rule::unique('users')->whereNotNull('email_verified_at'),
             ],
             'unique_nickname' => [
-                'required',
-                'min:3',
-                'max:20',
-                'regex:/^[a-zA-Z0-9_-]+$/',
+                ...ValidationRules::uniqueNickname(),
                 Rule::unique('users')->where(function ($query) {
                     $query->whereNot('email', $this->input('email'));
                 }),
             ],
-            'password' => ['required', Password::min(8)->max(30)->numbers()->symbols()],
+            'password' => ValidationRules::passwordRequired(),
         ];
     }
 }

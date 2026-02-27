@@ -4,26 +4,32 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Catalog\Hydrators;
 
-use App\Models\Specialization;
+use App\Domain\Catalog\Specialization;
 use Illuminate\Support\Collection;
 
-/** Specialization ↔ array для сериализации (кэш, экспорт). */
 final class SpecializationHydrator
 {
-    public function toArray(Specialization $model): array
+    public function toArray(Specialization $specialization): array
     {
-        return $model->toArray();
+        return [
+            'id' => $specialization->id,
+            'key' => $specialization->key,
+            'name' => $specialization->name,
+        ];
     }
 
+    /** @param array{id: int, key: string, name: string} $data */
     public function fromArray(array $data): Specialization
     {
-        $model = new Specialization();
-        $model->setRawAttributes($data);
-        return $model;
+        return new Specialization(
+            id: $data['id'],
+            key: $data['key'],
+            name: $data['name'],
+        );
     }
 
     /**
-     * @param Collection<int, Specialization> $collection
+     * @param  Collection<int, Specialization>  $collection
      * @return array<int, array<string, mixed>>
      */
     public function toArrayCollection(Collection $collection): array
@@ -32,7 +38,7 @@ final class SpecializationHydrator
     }
 
     /**
-     * @param array<int, array<string, mixed>> $data
+     * @param  array<int, array<string, mixed>>  $data
      * @return Collection<int, Specialization>
      */
     public function fromArrayCollection(array $data): Collection

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\Catalog;
 
-use App\Models\ProgrammingLanguage;
+use App\Domain\Catalog\ProgrammingLanguage;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 

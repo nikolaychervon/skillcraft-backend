@@ -30,8 +30,6 @@ class Specialization extends Model
 
     /**
      * Языки программирования, доступные в этой специализации (через треки).
-     *
-     * @return HasManyThrough<ProgrammingLanguage, Track>
      */
     public function programmingLanguages(): HasManyThrough
     {

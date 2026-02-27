@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests\Auth;
 
+use App\Http\Requests\Rules\ValidationRules;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules\Password;
 
 class LoginRequest extends FormRequest
 {
@@ -11,7 +13,7 @@ class LoginRequest extends FormRequest
     {
         return [
             'email' => 'required|string|email|max:255',
-            'password' => ['required', Password::min(8)->max(30)],
+            'password' => ValidationRules::passwordLogin(),
         ];
     }
 }

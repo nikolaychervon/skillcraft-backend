@@ -4,7 +4,7 @@ namespace Tests\Unit\Auth;
 
 use App\Application\User\Auth\CreateNewUser;
 use App\Domain\User\Auth\RequestData\CreatingUserRequestData;
-use App\Models\User;
+use App\Domain\User\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
@@ -68,7 +68,7 @@ class CreateNewUserActionTest extends TestCase
             'unique_nickname' => 'petr_ivanov',
         ]);
 
-        $this->assertNull($user->middle_name);
+        $this->assertNull($user->middleName);
     }
 
     public function test_it_hashes_password(): void

@@ -17,8 +17,11 @@ class SendPasswordResetLinkActionTest extends TestCase
     use RefreshDatabase;
 
     private SendPasswordResetLink $action;
+
     private PasswordResetTokensCacheInterface $cache;
+
     private User $user;
+
     private string $email = 'test@example.com';
 
     protected function setUp(): void
@@ -39,7 +42,8 @@ class SendPasswordResetLinkActionTest extends TestCase
             middleName: null
         );
 
-        $this->user = $createUserAction->run($requestData);
+        $domainUser = $createUserAction->run($requestData);
+        $this->user = User::query()->findOrFail($domainUser->id);
         $this->user->markEmailAsVerified();
     }
 
@@ -47,10 +51,7 @@ class SendPasswordResetLinkActionTest extends TestCase
     {
         $this->action->run($this->email);
 
-        Notification::assertSentTo(
-            $this->user,
-            PasswordResetNotification::class
-        );
+        Notification::assertSentOnDemand(PasswordResetNotification::class);
 
         $token = $this->cache->get($this->email);
         $this->assertNotNull($token);
@@ -94,10 +95,6 @@ class SendPasswordResetLinkActionTest extends TestCase
         $this->assertNotEquals($oldToken, $newToken);
         $this->cache->delete($this->email);
 
-        Notification::assertSentToTimes(
-            $this->user,
-            PasswordResetNotification::class,
-            2
-        );
+        Notification::assertSentOnDemandTimes(PasswordResetNotification::class, 2);
     }
 }

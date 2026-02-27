@@ -6,7 +6,7 @@ namespace App\Application\User\Profile;
 
 use App\Domain\User\Profile\RequestData\UpdateUserProfileRequestData;
 use App\Domain\User\Repositories\UserRepositoryInterface;
-use App\Models\User;
+use App\Domain\User\User;
 
 final readonly class UpdateUserProfile
 {

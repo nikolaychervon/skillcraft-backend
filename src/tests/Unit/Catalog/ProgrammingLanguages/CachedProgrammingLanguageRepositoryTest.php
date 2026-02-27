@@ -3,9 +3,9 @@
 namespace Tests\Unit\Catalog\ProgrammingLanguages;
 
 use App\Domain\Catalog\Cache\CatalogCacheInterface;
+use App\Domain\Catalog\ProgrammingLanguage;
 use App\Domain\Catalog\Repositories\ProgrammingLanguageRepositoryInterface;
-use App\Infrastructure\Catalog\Repositories\CachedProgrammingLanguageRepository;
-use App\Models\ProgrammingLanguage;
+use App\Infrastructure\Catalog\Repositories\Cached\CachedProgrammingLanguageRepository;
 use Illuminate\Support\Collection;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
@@ -18,7 +18,7 @@ class CachedProgrammingLanguageRepositoryTest extends TestCase
     public function test_get_by_specialization_id_returns_cached_value_when_cache_hit(): void
     {
         $cached = collect([
-            new ProgrammingLanguage(['id' => 1, 'key' => 'php', 'name' => 'PHP']),
+            new ProgrammingLanguage(1, 'php', 'PHP'),
         ]);
 
         $cache = Mockery::mock(CatalogCacheInterface::class);
@@ -41,7 +41,7 @@ class CachedProgrammingLanguageRepositoryTest extends TestCase
     public function test_get_by_specialization_id_calls_inner_and_puts_to_cache_when_cache_miss(): void
     {
         $fromDb = collect([
-            new ProgrammingLanguage(['id' => 1, 'key' => 'js', 'name' => 'JavaScript']),
+            new ProgrammingLanguage(1, 'js', 'JavaScript'),
         ]);
 
         $cache = Mockery::mock(CatalogCacheInterface::class);
@@ -66,4 +66,3 @@ class CachedProgrammingLanguageRepositoryTest extends TestCase
         $this->assertSame($fromDb, $result);
     }
 }
-

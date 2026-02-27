@@ -2,8 +2,10 @@
 
 namespace Tests\Unit\Catalog\Specializations;
 
+use App\Domain\Catalog\Specialization;
+use App\Infrastructure\Catalog\Mappers\SpecializationMapper;
 use App\Infrastructure\Catalog\Repositories\SpecializationRepository;
-use App\Models\Specialization;
+use App\Models\Specialization as SpecializationModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -16,14 +18,14 @@ class SpecializationRepositoryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->repository = new SpecializationRepository();
+        $this->repository = new SpecializationRepository(new SpecializationMapper);
     }
 
     public function test_get_all_returns_specializations_ordered_by_name(): void
     {
-        Specialization::create(['key' => 'backend', 'name' => 'Backend']);
-        Specialization::create(['key' => 'frontend', 'name' => 'Frontend']);
-        Specialization::create(['key' => 'android', 'name' => 'Android']);
+        SpecializationModel::create(['key' => 'backend', 'name' => 'Backend']);
+        SpecializationModel::create(['key' => 'frontend', 'name' => 'Frontend']);
+        SpecializationModel::create(['key' => 'android', 'name' => 'Android']);
 
         $result = $this->repository->getAll();
 
@@ -41,7 +43,7 @@ class SpecializationRepositoryTest extends TestCase
 
     public function test_find_by_id_returns_specialization_when_exists(): void
     {
-        $spec = Specialization::create(['key' => 'backend', 'name' => 'Backend']);
+        $spec = SpecializationModel::create(['key' => 'backend', 'name' => 'Backend']);
 
         $result = $this->repository->findById($spec->id);
 

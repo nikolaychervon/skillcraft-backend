@@ -3,8 +3,9 @@
 namespace Tests\Feature\Auth;
 
 use App\Application\User\Auth\CreateNewUser;
-use App\Domain\User\Auth\RequestData\CreatingUserRequestData;
 use App\Domain\User\Auth\Exceptions\IncorrectLoginDataException;
+use App\Domain\User\Auth\RequestData\CreatingUserRequestData;
+use App\Domain\User\Repositories\UserRepositoryInterface;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -14,11 +15,15 @@ class AuthControllerTest extends TestCase
     use RefreshDatabase;
 
     private const string REGISTER_API = '/api/v1/register';
+
     private const string LOGIN_API = '/api/v1/login';
+
     private const string LOGOUT_API = '/api/v1/logout';
+
     private const string LOGOUT_ALL_API = '/api/v1/logout-all';
 
     private string $email = 'test@example.com';
+
     private string $password = 'Password123!';
 
     public function test_it_registers_user_successfully(): void
@@ -36,7 +41,7 @@ class AuthControllerTest extends TestCase
             ->assertJsonStructure([
                 'success',
                 'message',
-                'data' => ['user_id', 'email']
+                'data' => ['user_id', 'email'],
             ])
             ->assertJson([
                 'success' => true,
@@ -79,7 +84,7 @@ class AuthControllerTest extends TestCase
             $response = $this->postJson('/api/v1/register', [
                 'first_name' => 'Иван',
                 'last_name' => 'Петров',
-                'email' => "blocked@example.com",
+                'email' => 'blocked@example.com',
                 'unique_nickname' => "user{$i}",
                 'password' => $this->password,
                 'password_confirmation' => $this->password,
@@ -154,8 +159,8 @@ class AuthControllerTest extends TestCase
             middleName: null
         );
 
-        $user = $createUserAction->run($requestData);
-        $user->markEmailAsVerified();
+        $domainUser = $createUserAction->run($requestData);
+        app(UserRepositoryInterface::class)->markEmailVerified($domainUser);
 
         $response = $this->postJson(self::LOGIN_API, [
             'email' => $this->email,
@@ -166,7 +171,7 @@ class AuthControllerTest extends TestCase
             ->assertJsonStructure([
                 'success',
                 'message',
-                'data' => ['token']
+                'data' => ['token'],
             ])
             ->assertJson([
                 'success' => true,
@@ -194,7 +199,7 @@ class AuthControllerTest extends TestCase
         $response->assertStatus(401)
             ->assertJson([
                 'success' => false,
-                'message' => __('exceptions.' . IncorrectLoginDataException::class),
+                'message' => __('exceptions.'.IncorrectLoginDataException::class),
             ]);
     }
 
@@ -208,7 +213,7 @@ class AuthControllerTest extends TestCase
         $response->assertStatus(401)
             ->assertJson([
                 'success' => false,
-                'message' => __('exceptions.' . IncorrectLoginDataException::class),
+                'message' => __('exceptions.'.IncorrectLoginDataException::class),
             ]);
     }
 
@@ -241,7 +246,7 @@ class AuthControllerTest extends TestCase
         $token = $loginResponse->json('data.token');
 
         $logoutResponse = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token,
+            'Authorization' => 'Bearer '.$token,
         ])->postJson(self::LOGOUT_API);
 
         $logoutResponse->assertStatus(200)
@@ -274,7 +279,7 @@ class AuthControllerTest extends TestCase
         $this->assertEquals(2, $user->tokens()->count());
 
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token1,
+            'Authorization' => 'Bearer '.$token1,
         ])->postJson(self::LOGOUT_ALL_API);
 
         $response->assertStatus(200)

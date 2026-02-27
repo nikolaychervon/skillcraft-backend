@@ -8,18 +8,22 @@ use App\Application\User\Auth\LoginUser;
 use App\Application\User\Auth\LogoutAllUser;
 use App\Application\User\Auth\LogoutUser;
 use App\Application\User\Auth\RegisterUser;
+use App\Domain\User\Auth\Exceptions\IncorrectLoginDataException;
 use App\Domain\User\Auth\RequestData\CreatingUserRequestData;
 use App\Domain\User\Auth\RequestData\LoginUserRequestData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Requests\Base\AuthenticatedRequest;
 use App\Http\Responses\ApiResponse;
 use App\Support\Http\HttpCode;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
+    /**
+     * @throws IncorrectLoginDataException
+     */
     public function login(LoginRequest $request, LoginUser $loginUser): JsonResponse
     {
         $data = LoginUserRequestData::fromArray($request->validated());
@@ -39,15 +43,17 @@ class AuthController extends Controller
         ], HttpCode::Created);
     }
 
-    public function logout(Request $request, LogoutUser $logoutUser): JsonResponse
+    public function logout(AuthenticatedRequest $request, LogoutUser $logoutUser): JsonResponse
     {
-        $logoutUser->run($request->user());
+        $logoutUser->run($request->getDomainUser());
+
         return ApiResponse::success(__('auth.logout'));
     }
 
-    public function logoutAll(Request $request, LogoutAllUser $logoutAllUser): JsonResponse
+    public function logoutAll(AuthenticatedRequest $request, LogoutAllUser $logoutAllUser): JsonResponse
     {
-        $logoutAllUser->run($request->user());
+        $logoutAllUser->run($request->getDomainUser());
+
         return ApiResponse::success(__('auth.logout-all'));
     }
 }

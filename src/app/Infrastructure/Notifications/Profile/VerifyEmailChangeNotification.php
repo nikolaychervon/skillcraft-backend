@@ -15,8 +15,7 @@ class VerifyEmailChangeNotification extends EmailNotification
         private readonly int $userId,
         private readonly string $name,
         private readonly string $pendingEmail,
-    ) {
-    }
+    ) {}
 
     public function toMail($notifiable): MailMessage
     {

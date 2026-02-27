@@ -17,12 +17,14 @@ class CatalogController extends Controller
     public function specializations(GetSpecializations $getSpecializations): JsonResponse
     {
         $collection = $getSpecializations->run();
+
         return ApiResponse::success(data: SpecializationResource::collection($collection));
     }
 
-    public function specializationLanguages(int $id, GetSpecializationLanguages $getSpecializationLanguages): JsonResponse
+    public function specializationLanguages(int $specialization, GetSpecializationLanguages $getSpecializationLanguages): JsonResponse
     {
-        $collection = $getSpecializationLanguages->run($id);
+        $collection = $getSpecializationLanguages->run($specialization);
+
         return ApiResponse::success(data: ProgrammingLanguageResource::collection($collection));
     }
 }

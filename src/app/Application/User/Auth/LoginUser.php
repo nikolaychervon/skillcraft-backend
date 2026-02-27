@@ -12,10 +12,6 @@ use App\Domain\User\Auth\Services\TokenServiceInterface;
 use App\Domain\User\Auth\Specifications\UserNotConfirmedSpecification;
 use App\Domain\User\Repositories\UserRepositoryInterface;
 
-/**
- * Аутентификация по email и паролю.
- * Требуется подтверждённый email; при успехе возвращает API-токен.
- */
 final readonly class LoginUser
 {
     public function __construct(
@@ -31,11 +27,11 @@ final readonly class LoginUser
         $user = $this->userRepository->findByEmail($data->email);
 
         if ($this->userNotConfirmedSpecification->isSatisfiedBy($user)) {
-            throw new IncorrectLoginDataException();
+            throw new IncorrectLoginDataException;
         }
 
         if (!$this->hashService->check($data->password, $user->password)) {
-            throw new IncorrectLoginDataException();
+            throw new IncorrectLoginDataException;
         }
 
         return $this->tokenService->createAuthToken($user, AuthConstants::DEFAULT_TOKEN_NAME);

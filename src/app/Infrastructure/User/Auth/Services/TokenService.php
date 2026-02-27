@@ -4,23 +4,28 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\User\Auth\Services;
 
+use App\Domain\User\Auth\Repositories\AuthTokenRepositoryInterface;
 use App\Domain\User\Auth\Services\TokenServiceInterface;
-use App\Models\User;
+use App\Domain\User\User;
 
-class TokenService implements TokenServiceInterface
+final class TokenService implements TokenServiceInterface
 {
-    public function createAuthToken(User $user, string $tokenName = 'auth_token'): string
+    public function __construct(
+        private readonly AuthTokenRepositoryInterface $authTokenRepository,
+    ) {}
+
+    public function createAuthToken(User $user, string $tokenName): string
     {
-        return $user->createToken($tokenName)->plainTextToken;
+        return $this->authTokenRepository->createToken($user->id, $tokenName);
     }
 
     public function deleteCurrentToken(User $user): void
     {
-        $user->currentAccessToken()?->delete();
+        $this->authTokenRepository->deleteCurrentRequestToken($user->id);
     }
 
     public function deleteAllTokens(User $user): void
     {
-        $user->tokens()->delete();
+        $this->authTokenRepository->deleteAllTokens($user->id);
     }
 }

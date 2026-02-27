@@ -10,7 +10,7 @@ use App\Domain\User\Auth\RequestData\CreatingUserRequestData;
 use App\Domain\User\Auth\Services\HashServiceInterface;
 use App\Domain\User\Auth\Services\NotificationServiceInterface;
 use App\Domain\User\Repositories\UserRepositoryInterface;
-use App\Models\User;
+use App\Domain\User\User;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Tests\TestCase;
@@ -34,9 +34,14 @@ class RegisterUserActionTest extends TestCase
         $hashService = app(HashServiceInterface::class);
         $notificationService = Mockery::mock(NotificationServiceInterface::class);
 
-        $user = new User();
-        $user->id = 123;
-        $user->email = $requestData->email;
+        $user = new User(
+            id: 123,
+            email: $requestData->email,
+            password: 'hash',
+            firstName: 'Иван',
+            lastName: 'Петров',
+            uniqueNickname: 'ivan_petrov',
+        );
 
         $repo->shouldReceive('findByEmail')
             ->once()
@@ -76,9 +81,14 @@ class RegisterUserActionTest extends TestCase
         $hashService = app(HashServiceInterface::class);
         $notificationService = Mockery::mock(NotificationServiceInterface::class);
 
-        $existingUser = new User();
-        $existingUser->id = 456;
-        $existingUser->email = $requestData->email;
+        $existingUser = new User(
+            id: 456,
+            email: $requestData->email,
+            password: 'hash',
+            firstName: 'Иван',
+            lastName: 'Петров',
+            uniqueNickname: 'ivan_petrov',
+        );
 
         $repo->shouldReceive('findByEmail')
             ->once()

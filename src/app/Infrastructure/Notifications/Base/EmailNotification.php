@@ -19,11 +19,11 @@ abstract class EmailNotification extends Notification implements ShouldQueue
     }
 
     /**
-     * @param array<string, mixed> $params
+     * @param  array<string, mixed>  $params
      */
     protected function buildMailMessage(array $params): MailMessage
     {
-        $message = new MailMessage();
+        $message = new MailMessage;
         $notificationClass = static::class;
         $baseContent = __("email.$notificationClass", $params);
 

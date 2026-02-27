@@ -2,7 +2,7 @@
 
 namespace Tests\Fakes\RequestDataAssembler;
 
-use App\Application\Shared\RequestData\BaseRequestData;
+use App\Domain\Shared\RequestData\BaseRequestData;
 
 readonly class TestNoConstructorRequestData extends BaseRequestData
 {

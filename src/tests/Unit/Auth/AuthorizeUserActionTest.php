@@ -9,7 +9,8 @@ use App\Application\User\Auth\LoginUser;
 use App\Domain\User\Auth\Exceptions\IncorrectLoginDataException;
 use App\Domain\User\Auth\RequestData\CreatingUserRequestData;
 use App\Domain\User\Auth\RequestData\LoginUserRequestData;
-use App\Models\User;
+use App\Domain\User\Repositories\UserRepositoryInterface;
+use App\Domain\User\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -18,8 +19,11 @@ class AuthorizeUserActionTest extends TestCase
     use RefreshDatabase;
 
     private LoginUser $action;
+
     private CreateNewUser $createUserAction;
+
     private User $user;
+
     private string $password = 'Password123!';
 
     protected function setUp(): void
@@ -42,7 +46,7 @@ class AuthorizeUserActionTest extends TestCase
 
     public function test_it_returns_token_on_successful_login(): void
     {
-        $this->user->markEmailAsVerified();
+        app(UserRepositoryInterface::class)->markEmailVerified($this->user);
         $data = LoginUserRequestData::fromArray([
             'email' => 'ivan@example.com',
             'password' => $this->password,
@@ -71,7 +75,7 @@ class AuthorizeUserActionTest extends TestCase
 
     public function test_it_throws_exception_when_password_is_incorrect(): void
     {
-        $this->user->markEmailAsVerified();
+        app(UserRepositoryInterface::class)->markEmailVerified($this->user);
         $this->expectException(IncorrectLoginDataException::class);
 
         $data = LoginUserRequestData::fromArray([

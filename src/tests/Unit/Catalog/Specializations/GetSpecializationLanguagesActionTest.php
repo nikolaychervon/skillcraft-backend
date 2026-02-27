@@ -3,8 +3,8 @@
 namespace Tests\Unit\Catalog\Specializations;
 
 use App\Application\Catalog\GetSpecializationLanguages;
+use App\Domain\Catalog\ProgrammingLanguage;
 use App\Domain\Catalog\Repositories\ProgrammingLanguageRepositoryInterface;
-use App\Models\ProgrammingLanguage;
 use Illuminate\Support\Collection;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
@@ -18,8 +18,8 @@ class GetSpecializationLanguagesActionTest extends TestCase
     {
         $specializationId = 5;
         $languages = collect([
-            new ProgrammingLanguage(['id' => 1, 'key' => 'php', 'name' => 'PHP']),
-            new ProgrammingLanguage(['id' => 2, 'key' => 'js', 'name' => 'JavaScript']),
+            new ProgrammingLanguage(1, 'php', 'PHP'),
+            new ProgrammingLanguage(2, 'js', 'JavaScript'),
         ]);
 
         $repo = Mockery::mock(ProgrammingLanguageRepositoryInterface::class);

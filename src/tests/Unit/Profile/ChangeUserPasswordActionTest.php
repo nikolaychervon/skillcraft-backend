@@ -2,12 +2,12 @@
 
 namespace Tests\Unit\Profile;
 
-use App\Domain\User\Auth\Services\HashServiceInterface;
 use App\Application\User\Profile\ChangeUserPassword;
-use App\Domain\User\Profile\RequestData\ChangeUserPasswordRequestData;
+use App\Domain\User\Auth\Services\HashServiceInterface;
 use App\Domain\User\Profile\Exceptions\IncorrectCurrentPasswordException;
+use App\Domain\User\Profile\RequestData\ChangeUserPasswordRequestData;
 use App\Domain\User\Repositories\UserRepositoryInterface;
-use App\Models\User;
+use App\Domain\User\User;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Tests\TestCase;
@@ -22,8 +22,14 @@ class ChangeUserPasswordActionTest extends TestCase
         $hash = Mockery::mock(HashServiceInterface::class);
         $action = new ChangeUserPassword($repo, $hash);
 
-        $user = new User();
-        $user->password = 'hashed';
+        $user = new User(
+            id: 1,
+            email: 'u@u.com',
+            password: 'hashed',
+            firstName: 'F',
+            lastName: 'L',
+            uniqueNickname: 'nick',
+        );
 
         $requestData = new ChangeUserPasswordRequestData('wrong', 'new');
 
@@ -40,8 +46,14 @@ class ChangeUserPasswordActionTest extends TestCase
         $hash = Mockery::mock(HashServiceInterface::class);
         $action = new ChangeUserPassword($repo, $hash);
 
-        $user = new User();
-        $user->password = 'hashed';
+        $user = new User(
+            id: 1,
+            email: 'u@u.com',
+            password: 'hashed',
+            firstName: 'F',
+            lastName: 'L',
+            uniqueNickname: 'nick',
+        );
 
         $requestData = new ChangeUserPasswordRequestData('old', 'new');
 

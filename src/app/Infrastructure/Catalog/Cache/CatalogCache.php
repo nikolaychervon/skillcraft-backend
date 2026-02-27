@@ -10,21 +10,18 @@ use App\Infrastructure\Catalog\Hydrators\SpecializationHydrator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
-/**
- * Кэш каталога в Redis. Ключи и TTL — здесь.
- * В хранилище пишется JSON.
- */
 final class CatalogCache implements CatalogCacheInterface
 {
     private const int TTL_SECONDS = 60;
+
     private const string KEY_SPECIALIZATIONS = 'catalog.specializations';
+
     private const string KEY_SPECIALIZATION_LANGUAGES = 'catalog.specializations.%d.languages';
 
     public function __construct(
         private readonly SpecializationHydrator $specializationHydrator,
         private readonly ProgrammingLanguageHydrator $languageHydrator,
-    ) {
-    }
+    ) {}
 
     public function getSpecializations(): ?Collection
     {

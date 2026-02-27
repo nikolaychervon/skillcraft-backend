@@ -11,8 +11,7 @@ class HashService implements HashServiceInterface
 {
     public function __construct(
         private readonly Hasher $hasher
-    ) {
-    }
+    ) {}
 
     public function make(string $password): string
     {

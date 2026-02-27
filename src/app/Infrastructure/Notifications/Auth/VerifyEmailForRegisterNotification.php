@@ -6,30 +6,35 @@ namespace App\Infrastructure\Notifications\Auth;
 
 use App\Domain\User\Auth\Constants\AuthConstants;
 use App\Infrastructure\Notifications\Base\EmailNotification;
-use App\Models\User;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\URL;
 
 class VerifyEmailForRegisterNotification extends EmailNotification
 {
-    public function toMail(User $notifiable): MailMessage
+    public function __construct(
+        private readonly int $userId,
+        private readonly string $email,
+        private readonly string $firstName,
+    ) {}
+
+    public function toMail(mixed $notifiable): MailMessage
     {
-        $verificationUrl = $this->generateVerificationUrl($notifiable);
+        $verificationUrl = $this->generateVerificationUrl();
 
         return $this->buildMailMessage([
-            'name' => $notifiable->first_name,
+            'name' => $this->firstName,
             'verification_url' => $verificationUrl,
         ]);
     }
 
-    protected function generateVerificationUrl(User $notifiable): string
+    private function generateVerificationUrl(): string
     {
         return URL::temporarySignedRoute(
             'verification.verify',
             now()->addMinutes(AuthConstants::EMAIL_VERIFICATION_TOKEN_TTL),
             [
-                'id' => $notifiable->getKey(),
-                'hash' => sha1($notifiable->getEmailForVerification()),
+                'id' => $this->userId,
+                'hash' => sha1($this->email),
             ]
         );
     }

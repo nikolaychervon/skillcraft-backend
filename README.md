@@ -97,52 +97,81 @@ Horizon: http://localhost/horizon
 ---
 ## 📂 Структура проекта
 
-Структура показана только для нескольких модулей, но она распространяется на все. Показано только для понимания.
+Структура показана для основных модулей; общая схема слоёв (Domain → Application → Infrastructure) распространяется на все домены.
+
+**Доменные сущности** (в `app/Domain/{domain}/`)
 
 ```bash
-  gradeup-backend/
-    ├── 🐳 docker/                          # Настройки контейнеров
-    ├── 🐘 docker-compose.yml               # Docker-compose окружение (dev)
-    ├── 📜 Makefile                         # Команды для управления проектом
-    ├── 📁 src/
-    │   ├── app/
-    │   │   ├── Domain/                     # Домен (агрегат User)
-    │   │   │   └── User/
-    │   │   │       ├── Repositories/       # Интерфейсы репозиториев
-    │   │   │       ├── Exceptions/         # Общие исключения
-    │   │   │       ├── Auth/               # Модуль аутентификации: вход, регистрация, верификация, сброс пароля
-    │   │   │       │   ├── Actions/        # Экшены (бизнес логика)
-    │   │   │       │   ├── Cache/          # Интерфейсы сервисов кеша
-    │   │   │       │   ├── Constants/      # Константы
-    │   │   │       │   ├── DTO/            # DTO домена
-    │   │   │       │   ├── Exceptions/     # Исключения
-    │   │   │       │   ├── Services/       # Сервисы
-    │   │   │       │   └── Specifications/ # Спецификации
-    │   │   │       └── Profile/            # Модуль профиля: профиль, смена email/пароля
-    │   │   │           ├── Actions/        # Экшены (бизнес логика)
-    │   │   │           ├── Constants/      # Константы
-    │   │   │           ├── DTO/            # DTO домена профиля
-    │   │   │           ├── Exceptions/     # Исключения
-    │   │   │           └── Services/       # Сервисы
-    │   │   ├── Application/                # Слой приложения
-    │   │   │   ├── User/
-    │   │   │   │   ├── Auth/               # Классы для модуля аутентификации
-    │   │   │   │   └── Profile/            # Классы для модуля профиля
-    │   │   │   └── Shared/                 # Общие классы
-    │   │   ├── Infrastructure/             # Реализации (Laravel/Eloquent/Cache/Mail)
-    │   │   │   ├── User/
-    │   │   │   │   ├── Repositories/       # Реализация интерфейсов
-    │   │   │   │   ├── Auth/               # Реализация классов для модуля аутентификации
-    │   │   │   │   └── Profile/            # Реализация классов для модуля профиля
-    │   │   │   └── Notifications/          # Email-уведомления
-    │   │   ├── Http/                       # Controllers
-    │   │   ├── Models/                     # Eloquent-модели
-    │   │   └── Providers/                  # Провайдеры
-    │   ├── config/                         # Конфиги Laravel
-    │   ├── database/                       # Миграции, сидеры, фабрики
-    │   ├── lang/                           # Локализация (ru/en), в т.ч. exceptions
-    │   ├── routes/                         # api.php роутинг
-    │   ├── tests/                          # Unit
-    │   └── .env / .env.example             # Окружение
-    └── 📖 README.md                        # Ты тут :)
+gradeup-backend/
+├── docker/                              # Конфигурация контейнеров (PHP, Nginx)
+├── docker-compose.yml                   # Окружение для разработки
+├── Makefile                             # Команды управления проектом (make setup, make help)
+├── src/                                 # Исходный код приложения (Laravel)
+│   ├── app/
+│   │   ├── Domain/                      # Доменный слой (сущности, интерфейсы, контракты)
+│   │   │   ├── Catalog/                 # Каталог: специализации, языки программирования, треки
+│   │   │   │   ├── Cache/               # Интерфейсы кеша каталога
+│   │   │   │   └── Repositories/        # Интерфейсы репозиториев
+│   │   │   ├── Shared/                  # Общие для домена: исключения, RequestData
+│   │   │   │   ├── Exceptions/
+│   │   │   │   └── RequestData/         # Базовые классы для данных запроса
+│   │   │   └── User/                    # Агрегат пользователя
+│   │   │       ├── Auth/                # Аутентификация: вход, регистрация, верификация, сброс пароля
+│   │   │       │   ├── Cache/           # Интерфейсы кеша (токены, сброс пароля)
+│   │   │       │   ├── Constants/
+│   │   │       │   ├── Exceptions/
+│   │   │       │   ├── Repositories/
+│   │   │       │   ├── RequestData/
+│   │   │       │   ├── Services/        # Интерфейсы (хеш, токены)
+│   │   │       │   └── Specifications/
+│   │   │       ├── Exceptions/
+│   │   │       ├── Profile/             # Профиль: смена email/пароля, верификация
+│   │   │       │   ├── Constants/
+│   │   │       │   ├── Exceptions/
+│   │   │       │   ├── RequestData/
+│   │   │       │   └── Services/
+│   │   │       └── Repositories/
+│   │   ├── Application/                 # Слой приложения (use cases)
+│   │   │   ├── Catalog/                 # Сценарии каталога
+│   │   │   ├── Shared/                  # Общие исключения, константы
+│   │   │   │   ├── Constants/
+│   │   │   │   └── Exceptions/
+│   │   │   └── User/
+│   │   │       ├── Auth/                # Регистрация, вход, верификация, сброс пароля
+│   │   │       └── Profile/             # Смена пароля, смена email
+│   │   ├── Infrastructure/              # Реализации (Laravel, Eloquent, кеш, почта)
+│   │   │   ├── Catalog/                 # Репозитории, кеш, гидраторы, мапперы
+│   │   │   │   ├── Cache/
+│   │   │   │   ├── Hydrators/
+│   │   │   │   ├── Mappers/
+│   │   │   │   └── Repositories/
+│   │   │   ├── Notifications/           # Email-уведомления (Auth, Profile, Base)
+│   │   │   └── User/
+│   │   │       ├── Auth/                # Sanctum, кеш токенов, сервисы
+│   │   │       ├── Mappers/
+│   │   │       ├── Profile/
+│   │   │       └── Repositories/
+│   │   ├── Http/                        # Контроллеры, middleware, запросы, ресурсы, ответы
+│   │   │   ├── Controllers/             # Auth, Catalog, Profile
+│   │   │   ├── Middleware/
+│   │   │   ├── Requests/
+│   │   │   ├── Resources/               # API-ресурсы (Catalog, Profile)
+│   │   │   └── Responses/
+│   │   ├── Models/                      # Eloquent-модели
+│   │   ├── Providers/
+│   │   └── Support/                     # Вспомогательные классы (в т.ч. Http)
+│   ├── bootstrap/
+│   ├── config/
+│   ├── database/                        # Миграции, сидеры, фабрики
+│   ├── lang/                            # Локализация (ru/en), в т.ч. исключения
+│   ├── public/
+│   ├── resources/                       # CSS, JS, views (Vite)
+│   ├── routes/                          # api.php и др.
+│   ├── storage/
+│   ├── tests/                           # Unit и Feature
+│   ├── .env / .env.example
+│   ├── composer.json
+│   ├── phpstan.neon.dist                # Конфиг PHPStan
+│   └── phpunit.xml
+└── README.md
 ```

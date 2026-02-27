@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\Profile;
 
-use App\Models\User;
+use App\Domain\User\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/**
- * @mixin User
- */
+/** @mixin User */
 class UserProfileResource extends JsonResource
 {
     /**
@@ -20,12 +18,12 @@ class UserProfileResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'first_name' => $this->first_name,
-            'last_name' => $this->last_name,
-            'middle_name' => $this->middle_name,
-            'unique_nickname' => $this->unique_nickname,
+            'first_name' => $this->firstName,
+            'last_name' => $this->lastName,
+            'middle_name' => $this->middleName,
+            'unique_nickname' => $this->uniqueNickname,
             'email' => $this->email,
-            'email_verified_at' => $this->email_verified_at?->format('Y-m-d H:i:s'),
+            'email_verified_at' => $this->emailVerifiedAt?->format('Y-m-d H:i:s'),
         ];
     }
 }

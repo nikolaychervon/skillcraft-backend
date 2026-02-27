@@ -4,8 +4,8 @@ namespace Tests\Unit\Catalog\Specializations;
 
 use App\Domain\Catalog\Cache\CatalogCacheInterface;
 use App\Domain\Catalog\Repositories\SpecializationRepositoryInterface;
-use App\Infrastructure\Catalog\Repositories\CachedSpecializationRepository;
-use App\Models\Specialization;
+use App\Domain\Catalog\Specialization;
+use App\Infrastructure\Catalog\Repositories\Cached\CachedSpecializationRepository;
 use Illuminate\Support\Collection;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
@@ -18,7 +18,7 @@ class CachedSpecializationRepositoryTest extends TestCase
     public function test_get_all_returns_cached_value_when_cache_hit(): void
     {
         $cached = collect([
-            new Specialization(['id' => 1, 'key' => 'cached', 'name' => 'Cached']),
+            new Specialization(1, 'cached', 'Cached'),
         ]);
 
         $cache = Mockery::mock(CatalogCacheInterface::class);
@@ -40,7 +40,7 @@ class CachedSpecializationRepositoryTest extends TestCase
     public function test_get_all_calls_inner_and_puts_to_cache_when_cache_miss(): void
     {
         $fromDb = collect([
-            new Specialization(['id' => 1, 'key' => 'backend', 'name' => 'Backend']),
+            new Specialization(1, 'backend', 'Backend'),
         ]);
 
         $cache = Mockery::mock(CatalogCacheInterface::class);
@@ -65,7 +65,7 @@ class CachedSpecializationRepositoryTest extends TestCase
 
     public function test_find_by_id_delegates_to_inner_without_cache(): void
     {
-        $specialization = new Specialization(['id' => 42, 'key' => 'frontend', 'name' => 'Frontend']);
+        $specialization = new Specialization(42, 'frontend', 'Frontend');
 
         $cache = Mockery::mock(CatalogCacheInterface::class);
         $cache->shouldNotReceive('getSpecializations');

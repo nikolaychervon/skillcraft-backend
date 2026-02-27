@@ -13,6 +13,7 @@ class CatalogControllerTest extends TestCase
     use RefreshDatabase;
 
     private const string SPECIALIZATIONS_API = '/api/v1/catalog/specializations';
+
     private const string SPECIALIZATION_LANGUAGES_API = '/api/v1/catalog/specializations/%d/languages';
 
     public function test_specializations_returns_empty_list_when_no_data(): void

@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace App\Application\Shared\Exceptions;
 
-use App\Http\Responses\ApiResponse;
 use App\Support\Http\HttpCode;
-use Illuminate\Http\JsonResponse;
+use Exception;
+use Throwable;
 
-abstract class ApiException extends \Exception
+abstract class ApiException extends Exception
 {
     protected HttpCode $statusCode = HttpCode::BadRequest;
 
     public function __construct(
         ?string $message = null,
         int $code = 0,
-        ?\Throwable $previous = null,
+        ?Throwable $previous = null,
     ) {
         parent::__construct(
             $message ?? $this->getTranslatedMessage(),
@@ -24,13 +24,9 @@ abstract class ApiException extends \Exception
         );
     }
 
-    public function render(): JsonResponse
+    public function getStatusCode(): HttpCode
     {
-        return ApiResponse::error(
-            $this->getMessage(),
-            $this->statusCode,
-            $this->getData(),
-        );
+        return $this->statusCode;
     }
 
     /** @return array<string, mixed>|null */
@@ -43,6 +39,7 @@ abstract class ApiException extends \Exception
     {
         $key = 'exceptions.' . static::class;
         $message = __($key);
+
         return $message !== $key ? $message : $this->generateDefaultMessage();
     }
 
@@ -51,6 +48,7 @@ abstract class ApiException extends \Exception
         $name = class_basename(static::class);
         $name = (string) preg_replace('/(?<! )(?<![A-Z])(?=[A-Z])/', ' ', $name);
         $name = str_replace('Exception', '', $name);
+
         return trim($name);
     }
 }

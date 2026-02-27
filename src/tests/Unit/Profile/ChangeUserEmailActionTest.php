@@ -6,7 +6,7 @@ use App\Application\User\Profile\ChangeUserEmail;
 use App\Domain\User\Profile\RequestData\ChangeUserEmailRequestData;
 use App\Domain\User\Profile\Services\ProfileNotificationServiceInterface;
 use App\Domain\User\Repositories\UserRepositoryInterface;
-use App\Models\User;
+use App\Domain\User\User;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Tests\TestCase;
@@ -22,7 +22,14 @@ class ChangeUserEmailActionTest extends TestCase
 
         $action = new ChangeUserEmail($repo, $notificationService);
 
-        $user = new User();
+        $user = new User(
+            id: 1,
+            email: 'old@example.com',
+            password: 'hash',
+            firstName: 'F',
+            lastName: 'L',
+            uniqueNickname: 'nick',
+        );
         $requestData = new ChangeUserEmailRequestData('new@example.com');
 
         $repo->shouldReceive('setPendingEmail')

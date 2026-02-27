@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Profile;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\Base\AuthenticatedRequest;
 use Illuminate\Validation\Rule;
 
-class ChangeEmailRequest extends FormRequest
+class ChangeEmailRequest extends AuthenticatedRequest
 {
     public function rules(): array
     {
-        $userId = $this->user()?->id;
+        $userId = $this->getDomainUser()->id;
 
         return [
             'email' => [

@@ -4,11 +4,11 @@ namespace Tests\Feature\Profile;
 
 use App\Application\User\Auth\CreateNewUser;
 use App\Domain\User\Auth\RequestData\CreatingUserRequestData;
+use App\Infrastructure\Notifications\Profile\VerifyEmailChangeNotification;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\URL;
-use App\Infrastructure\Notifications\Profile\VerifyEmailChangeNotification;
 use Tests\TestCase;
 
 class ProfileControllerTest extends TestCase
@@ -16,10 +16,13 @@ class ProfileControllerTest extends TestCase
     use RefreshDatabase;
 
     private const string PROFILE_API = '/api/v1/profile';
+
     private const string CHANGE_EMAIL_API = '/api/v1/profile/change-email';
+
     private const string CHANGE_PASSWORD_API = '/api/v1/profile/change-password';
 
     private User $user;
+
     private string $password = 'Password123!';
 
     protected function setUp(): void
@@ -35,7 +38,8 @@ class ProfileControllerTest extends TestCase
             password: $this->password,
             middleName: null
         );
-        $this->user = $createUserAction->run($requestData);
+        $domainUser = $createUserAction->run($requestData);
+        $this->user = User::query()->findOrFail($domainUser->id);
         $this->user->markEmailAsVerified();
     }
 

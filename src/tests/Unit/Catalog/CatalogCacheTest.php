@@ -2,11 +2,11 @@
 
 namespace Tests\Unit\Catalog;
 
+use App\Domain\Catalog\ProgrammingLanguage;
+use App\Domain\Catalog\Specialization;
 use App\Infrastructure\Catalog\Cache\CatalogCache;
 use App\Infrastructure\Catalog\Hydrators\ProgrammingLanguageHydrator;
 use App\Infrastructure\Catalog\Hydrators\SpecializationHydrator;
-use App\Models\ProgrammingLanguage;
-use App\Models\Specialization;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
@@ -20,8 +20,8 @@ class CatalogCacheTest extends TestCase
         parent::setUp();
         Cache::flush();
         $this->cache = new CatalogCache(
-            new SpecializationHydrator(),
-            new ProgrammingLanguageHydrator()
+            new SpecializationHydrator,
+            new ProgrammingLanguageHydrator
         );
     }
 
@@ -33,8 +33,8 @@ class CatalogCacheTest extends TestCase
     public function test_put_and_get_specializations_roundtrip(): void
     {
         $specializations = collect([
-            (new Specialization())->setRawAttributes(['id' => 1, 'key' => 'backend', 'name' => 'Backend', 'created_at' => null, 'updated_at' => null]),
-            (new Specialization())->setRawAttributes(['id' => 2, 'key' => 'frontend', 'name' => 'Frontend', 'created_at' => null, 'updated_at' => null]),
+            new Specialization(1, 'backend', 'Backend'),
+            new Specialization(2, 'frontend', 'Frontend'),
         ]);
 
         $this->cache->putSpecializations($specializations);
@@ -52,7 +52,7 @@ class CatalogCacheTest extends TestCase
     public function test_delete_specializations_clears_cache(): void
     {
         $specializations = collect([
-            (new Specialization())->setRawAttributes(['id' => 1, 'key' => 'x', 'name' => 'X', 'created_at' => null, 'updated_at' => null]),
+            new Specialization(1, 'x', 'X'),
         ]);
         $this->cache->putSpecializations($specializations);
         $this->assertNotNull($this->cache->getSpecializations());
@@ -71,8 +71,8 @@ class CatalogCacheTest extends TestCase
     {
         $specializationId = 10;
         $languages = collect([
-            (new ProgrammingLanguage())->setRawAttributes(['id' => 1, 'key' => 'php', 'name' => 'PHP', 'created_at' => null, 'updated_at' => null]),
-            (new ProgrammingLanguage())->setRawAttributes(['id' => 2, 'key' => 'js', 'name' => 'JavaScript', 'created_at' => null, 'updated_at' => null]),
+            new ProgrammingLanguage(1, 'php', 'PHP'),
+            new ProgrammingLanguage(2, 'js', 'JavaScript'),
         ]);
 
         $this->cache->putSpecializationLanguages($specializationId, $languages);
@@ -89,10 +89,10 @@ class CatalogCacheTest extends TestCase
     public function test_delete_specialization_languages_clears_only_that_specialization(): void
     {
         $langs1 = collect([
-            (new ProgrammingLanguage())->setRawAttributes(['id' => 1, 'key' => 'a', 'name' => 'A', 'created_at' => null, 'updated_at' => null]),
+            new ProgrammingLanguage(1, 'a', 'A'),
         ]);
         $langs2 = collect([
-            (new ProgrammingLanguage())->setRawAttributes(['id' => 2, 'key' => 'b', 'name' => 'B', 'created_at' => null, 'updated_at' => null]),
+            new ProgrammingLanguage(2, 'b', 'B'),
         ]);
 
         $this->cache->putSpecializationLanguages(1, $langs1);

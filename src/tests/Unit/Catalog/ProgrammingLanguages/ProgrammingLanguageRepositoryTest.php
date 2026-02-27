@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Catalog\ProgrammingLanguages;
 
+use App\Infrastructure\Catalog\Mappers\ProgrammingLanguageMapper;
 use App\Infrastructure\Catalog\Repositories\ProgrammingLanguageRepository;
 use App\Models\ProgrammingLanguage;
 use App\Models\Specialization;
@@ -18,7 +19,7 @@ class ProgrammingLanguageRepositoryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->repository = new ProgrammingLanguageRepository();
+        $this->repository = new ProgrammingLanguageRepository(new ProgrammingLanguageMapper);
     }
 
     public function test_get_by_specialization_id_returns_languages_through_tracks(): void
@@ -63,4 +64,3 @@ class ProgrammingLanguageRepositoryTest extends TestCase
         $this->assertTrue($result->isEmpty());
     }
 }
-

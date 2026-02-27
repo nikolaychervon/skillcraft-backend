@@ -2,13 +2,14 @@
 
 namespace Tests\Unit\Auth;
 
-use App\Domain\User\Exceptions\Email\EmailAlreadyVerifiedException;
-use App\Domain\User\Exceptions\Email\InvalidConfirmationLinkException;
-use App\Domain\User\Exceptions\UserNotFoundException;
 use App\Application\User\Auth\CreateNewUser;
 use App\Application\User\Auth\VerifyEmail;
 use App\Domain\User\Auth\RequestData\CreatingUserRequestData;
-use App\Models\User;
+use App\Domain\User\Exceptions\Email\EmailAlreadyVerifiedException;
+use App\Domain\User\Exceptions\Email\InvalidConfirmationLinkException;
+use App\Domain\User\Exceptions\UserNotFoundException;
+use App\Domain\User\User;
+use App\Models\User as UserModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Tests\TestCase;
@@ -18,9 +19,15 @@ class VerifyEmailActionTest extends TestCase
     use RefreshDatabase;
 
     private VerifyEmail $action;
+
     private CreateNewUser $createUserAction;
-    private User $user;
+
+    private User $domainUser;
+
+    private UserModel $user;
+
     private string $email = 'test@example.com';
+
     private string $hash;
 
     protected function setUp(): void
@@ -38,13 +45,14 @@ class VerifyEmailActionTest extends TestCase
             middleName: null
         );
 
-        $this->user = $this->createUserAction->run($requestData);
-        $this->hash = sha1($this->user->getEmailForVerification());
+        $this->domainUser = $this->createUserAction->run($requestData);
+        $this->user = UserModel::query()->findOrFail($this->domainUser->id);
+        $this->hash = sha1($this->domainUser->email);
     }
 
     public function test_it_verifies_email_successfully(): void
     {
-        $token = $this->action->run($this->user->id, $this->hash);
+        $token = $this->action->run($this->domainUser->id, $this->hash);
 
         $this->user->refresh();
 
@@ -56,8 +64,8 @@ class VerifyEmailActionTest extends TestCase
         $this->assertStringContainsString('|', $token);
 
         $this->assertDatabaseHas('personal_access_tokens', [
-            'tokenable_id' => $this->user->id,
-            'name' => 'auth_token'
+            'tokenable_id' => $this->domainUser->id,
+            'name' => 'auth_token',
         ]);
     }
 
@@ -74,26 +82,26 @@ class VerifyEmailActionTest extends TestCase
 
         $this->expectException(InvalidConfirmationLinkException::class);
 
-        $this->action->run($this->user->id, $invalidHash);
+        $this->action->run($this->domainUser->id, $invalidHash);
     }
 
     public function test_it_throws_exception_when_email_already_verified(): void
     {
-        $this->action->run($this->user->id, $this->hash);
+        $this->action->run($this->domainUser->id, $this->hash);
 
         $this->expectException(EmailAlreadyVerifiedException::class);
 
-        $this->action->run($this->user->id, $this->hash);
+        $this->action->run($this->domainUser->id, $this->hash);
     }
 
     public function test_it_does_not_create_token_when_email_already_verified(): void
     {
-        $this->action->run($this->user->id, $this->hash);
+        $this->action->run($this->domainUser->id, $this->hash);
 
         $tokensBefore = $this->user->tokens()->count();
 
         try {
-            $this->action->run($this->user->id, $this->hash);
+            $this->action->run($this->domainUser->id, $this->hash);
         } catch (EmailAlreadyVerifiedException $e) {
         }
 
@@ -104,13 +112,13 @@ class VerifyEmailActionTest extends TestCase
     {
         $this->assertEquals(0, $this->user->tokens()->count());
 
-        $this->action->run($this->user->id, $this->hash);
+        $this->action->run($this->domainUser->id, $this->hash);
         $this->assertEquals(1, $this->user->tokens()->count());
 
         $this->user->refresh();
 
         try {
-            $this->action->run($this->user->id, $this->hash);
+            $this->action->run($this->domainUser->id, $this->hash);
         } catch (EmailAlreadyVerifiedException $e) {
         }
 

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Application\User\Auth;
 
 use App\Domain\User\Auth\Services\TokenServiceInterface;
-use App\Models\User;
+use App\Domain\User\User;
 
 final readonly class LogoutUser
 {

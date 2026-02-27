@@ -8,11 +8,8 @@ use App\Domain\User\Auth\Services\HashServiceInterface;
 use App\Domain\User\Profile\Exceptions\IncorrectCurrentPasswordException;
 use App\Domain\User\Profile\RequestData\ChangeUserPasswordRequestData;
 use App\Domain\User\Repositories\UserRepositoryInterface;
-use App\Models\User;
+use App\Domain\User\User;
 
-/**
- * Смена пароля после проверки текущего пароля.
- */
 final readonly class ChangeUserPassword
 {
     public function __construct(
@@ -24,7 +21,7 @@ final readonly class ChangeUserPassword
     public function run(User $user, ChangeUserPasswordRequestData $data): void
     {
         if (!$this->hashService->check($data->oldPassword, $user->password)) {
-            throw new IncorrectCurrentPasswordException();
+            throw new IncorrectCurrentPasswordException;
         }
 
         $hashedPassword = $this->hashService->make($data->password);

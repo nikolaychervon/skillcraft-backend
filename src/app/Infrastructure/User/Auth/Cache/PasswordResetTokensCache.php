@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Cache;
 class PasswordResetTokensCache implements PasswordResetTokensCacheInterface
 {
     private const string PREFIX = 'password_reset_';
+
     private const string TOKEN_FIELD = 'token';
 
     public function store(string $email, string $token): void
@@ -39,6 +40,6 @@ class PasswordResetTokensCache implements PasswordResetTokensCacheInterface
 
     private function getCacheKey(string $email): string
     {
-        return self::PREFIX . hash('sha256', $email);
+        return self::PREFIX.hash('sha256', $email);
     }
 }

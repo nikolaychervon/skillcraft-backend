@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\User\Profile;
 
-use App\Models\User;
+use App\Domain\User\User;
 
 final readonly class GetUserProfile
 {

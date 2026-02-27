@@ -2,11 +2,11 @@
 
 namespace Tests\Feature\Auth;
 
-use App\Domain\User\Exceptions\UserNotFoundException;
 use App\Application\User\Auth\CreateNewUser;
 use App\Domain\User\Auth\Cache\PasswordResetTokensCacheInterface;
-use App\Domain\User\Auth\RequestData\CreatingUserRequestData;
 use App\Domain\User\Auth\Exceptions\InvalidResetTokenException;
+use App\Domain\User\Auth\RequestData\CreatingUserRequestData;
+use App\Domain\User\Exceptions\UserNotFoundException;
 use App\Infrastructure\Notifications\Auth\PasswordResetNotification;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -19,12 +19,17 @@ class PasswordResetControllerTest extends TestCase
     use RefreshDatabase;
 
     private const string FORGOT_PASSWORD_API = '/api/v1/forgot-password';
+
     private const string RESET_PASSWORD_API = '/api/v1/reset-password';
 
     private User $user;
+
     private string $email = 'test@example.com';
+
     private string $password = 'Password123!';
+
     private string $newPassword = 'NewPassword123!';
+
     private PasswordResetTokensCacheInterface $cache;
 
     protected function setUp(): void
@@ -43,7 +48,8 @@ class PasswordResetControllerTest extends TestCase
             middleName: null
         );
 
-        $this->user = $createUserAction->run($requestData);
+        $domainUser = $createUserAction->run($requestData);
+        $this->user = User::query()->findOrFail($domainUser->id);
         $this->user->markEmailAsVerified();
     }
 
@@ -61,10 +67,7 @@ class PasswordResetControllerTest extends TestCase
                 'message' => __('messages.password-reset-link'),
             ]);
 
-        Notification::assertSentTo(
-            $this->user,
-            PasswordResetNotification::class
-        );
+        Notification::assertSentOnDemand(PasswordResetNotification::class);
 
         $token = $this->cache->get($this->email);
         $this->assertNotNull($token);
@@ -139,7 +142,7 @@ class PasswordResetControllerTest extends TestCase
             ->assertJsonStructure([
                 'success',
                 'message',
-                'data' => ['token']
+                'data' => ['token'],
             ])
             ->assertJson([
                 'success' => true,
@@ -168,7 +171,7 @@ class PasswordResetControllerTest extends TestCase
         $response->assertStatus(422)
             ->assertJson([
                 'success' => false,
-                'message' => __('exceptions.' . InvalidResetTokenException::class),
+                'message' => __('exceptions.'.InvalidResetTokenException::class),
             ]);
     }
 
@@ -193,7 +196,7 @@ class PasswordResetControllerTest extends TestCase
         $response->assertStatus(422)
             ->assertJson([
                 'success' => false,
-                'message' => __('exceptions.' . InvalidResetTokenException::class),
+                'message' => __('exceptions.'.InvalidResetTokenException::class),
             ]);
     }
 
@@ -212,7 +215,7 @@ class PasswordResetControllerTest extends TestCase
         $response->assertStatus(404)
             ->assertJson([
                 'success' => false,
-                'message' => __('exceptions.' . UserNotFoundException::class),
+                'message' => __('exceptions.'.UserNotFoundException::class),
             ]);
     }
 
@@ -336,7 +339,7 @@ class PasswordResetControllerTest extends TestCase
         $this->assertNotEmpty($authToken);
 
         $this->withHeaders([
-            'Authorization' => 'Bearer ' . $authToken,
+            'Authorization' => 'Bearer '.$authToken,
         ])->postJson('/api/v1/logout')
             ->assertStatus(200);
     }

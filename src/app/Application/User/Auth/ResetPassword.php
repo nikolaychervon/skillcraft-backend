@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Application\User\Auth;
 
-use App\Domain\User\Exceptions\UserNotFoundException;
 use App\Domain\User\Auth\Cache\PasswordResetTokensCacheInterface;
 use App\Domain\User\Auth\Constants\AuthConstants;
 use App\Domain\User\Auth\Exceptions\InvalidResetTokenException;
@@ -13,14 +12,11 @@ use App\Domain\User\Auth\RequestData\ResetPasswordRequestData;
 use App\Domain\User\Auth\Services\HashServiceInterface;
 use App\Domain\User\Auth\Services\TokenServiceInterface;
 use App\Domain\User\Auth\Services\TransactionServiceInterface;
+use App\Domain\User\Exceptions\UserNotFoundException;
 use App\Domain\User\Repositories\UserRepositoryInterface;
-use App\Models\User;
+use App\Domain\User\User;
 use Illuminate\Support\Facades\Log;
 
-/**
- * Сброс пароля по токену из письма.
- * Выполняется в транзакции; при ошибке пишет в лог (см. docs/LOGGING.md). Возвращает новый API-токен.
- */
 final readonly class ResetPassword
 {
     public function __construct(
@@ -36,11 +32,11 @@ final readonly class ResetPassword
     {
         $token = $this->passwordResetTokensCache->get($data->email);
         if ($token === null || $token !== $data->resetToken) {
-            throw new InvalidResetTokenException();
+            throw new InvalidResetTokenException;
         }
 
         $user = $this->userRepository->findByEmail($data->email);
-        if (!$user instanceof User) {
+        if ($user === null) {
             throw new UserNotFoundException(['email' => $data->email]);
         }
 

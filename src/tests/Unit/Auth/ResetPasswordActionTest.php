@@ -2,19 +2,20 @@
 
 namespace Tests\Unit\Auth;
 
-use App\Domain\User\Exceptions\UserNotFoundException;
 use App\Application\User\Auth\CreateNewUser;
 use App\Application\User\Auth\ResetPassword;
 use App\Application\User\Auth\SendPasswordResetLink;
 use App\Domain\User\Auth\Cache\PasswordResetTokensCacheInterface;
-use App\Domain\User\Auth\RequestData\CreatingUserRequestData;
-use App\Domain\User\Auth\RequestData\ResetPasswordRequestData;
 use App\Domain\User\Auth\Exceptions\InvalidResetTokenException;
 use App\Domain\User\Auth\Exceptions\PasswordResetFailedException;
+use App\Domain\User\Auth\RequestData\CreatingUserRequestData;
+use App\Domain\User\Auth\RequestData\ResetPasswordRequestData;
 use App\Domain\User\Auth\Services\HashServiceInterface;
 use App\Domain\User\Auth\Services\TokenServiceInterface;
 use App\Domain\User\Auth\Services\TransactionServiceInterface;
+use App\Domain\User\Exceptions\UserNotFoundException;
 use App\Domain\User\Repositories\UserRepositoryInterface;
+use App\Domain\User\User as DomainUser;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
@@ -26,10 +27,17 @@ class ResetPasswordActionTest extends TestCase
     use RefreshDatabase;
 
     private ResetPassword $action;
+
     private SendPasswordResetLink $sendResetLinkAction;
+
     private PasswordResetTokensCacheInterface $cache;
+
     private User $user;
+
+    private DomainUser $domainUser;
+
     private string $email = 'test@example.com';
+
     private string $newPassword = 'NewPassword123!';
 
     protected function setUp(): void
@@ -49,7 +57,8 @@ class ResetPasswordActionTest extends TestCase
             middleName: null
         );
 
-        $this->user = $createUserAction->run($requestData);
+        $this->domainUser = $createUserAction->run($requestData);
+        $this->user = User::query()->findOrFail($this->domainUser->id);
         $this->user->markEmailAsVerified();
     }
 
@@ -157,7 +166,7 @@ class ResetPasswordActionTest extends TestCase
 
         $mock = $this->createMock(UserRepositoryInterface::class);
         $mock->method('findByEmail')
-            ->willThrowException(new PasswordResetFailedException());
+            ->willThrowException(new PasswordResetFailedException);
 
         $this->app->instance(UserRepositoryInterface::class, $mock);
 
@@ -179,7 +188,7 @@ class ResetPasswordActionTest extends TestCase
         );
 
         $repo = $this->createMock(UserRepositoryInterface::class);
-        $repo->method('findByEmail')->willReturn($this->user);
+        $repo->method('findByEmail')->willReturn($this->domainUser);
         $repo->method('updatePassword')->willThrowException(new \RuntimeException('db write failed'));
 
         $hashService = app(HashServiceInterface::class);

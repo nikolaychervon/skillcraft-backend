@@ -2,9 +2,10 @@
 
 namespace Tests\Feature\Auth;
 
-use App\Domain\User\Exceptions\Email\EmailAlreadyVerifiedException;
 use App\Application\User\Auth\CreateNewUser;
 use App\Domain\User\Auth\RequestData\CreatingUserRequestData;
+use App\Domain\User\Exceptions\Email\EmailAlreadyVerifiedException;
+use App\Domain\User\User as DomainUser;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
@@ -16,10 +17,15 @@ class EmailVerificationControllerTest extends TestCase
     use RefreshDatabase;
 
     private const string EMAIL_RESEND_API = '/api/v1/email/resend';
+
     private const string EMAIL_VERIFY_API = '/api/v1/email/verify';
 
     private User $user;
+
+    private DomainUser $domainUser;
+
     private string $email = 'test@example.com';
+
     private string $verificationUrl;
 
     protected function setUp(): void
@@ -36,14 +42,15 @@ class EmailVerificationControllerTest extends TestCase
             middleName: null
         );
 
-        $this->user = $createUserAction->run($requestData);
+        $this->domainUser = $createUserAction->run($requestData);
+        $this->user = User::query()->findOrFail($this->domainUser->id);
 
         $this->verificationUrl = URL::temporarySignedRoute(
             'verification.verify',
             Carbon::now()->addMinutes(60),
             [
-                'id' => $this->user->id,
-                'hash' => sha1($this->user->getEmailForVerification()),
+                'id' => $this->domainUser->id,
+                'hash' => sha1($this->domainUser->email),
             ]
         );
     }
@@ -56,7 +63,7 @@ class EmailVerificationControllerTest extends TestCase
             ->assertJsonStructure([
                 'success',
                 'message',
-                'data' => ['token']
+                'data' => ['token'],
             ])
             ->assertJson([
                 'success' => true,
@@ -76,7 +83,7 @@ class EmailVerificationControllerTest extends TestCase
             'verification.verify',
             Carbon::now()->addMinutes(60),
             [
-                'id' => $this->user->id,
+                'id' => $this->domainUser->id,
                 'hash' => 'invalid-hash',
             ]
         );
@@ -91,8 +98,8 @@ class EmailVerificationControllerTest extends TestCase
             'verification.verify',
             Carbon::now()->subMinutes(1),
             [
-                'id' => $this->user->id,
-                'hash' => sha1($this->user->getEmailForVerification()),
+                'id' => $this->domainUser->id,
+                'hash' => sha1($this->domainUser->email),
             ]
         );
 
@@ -124,7 +131,7 @@ class EmailVerificationControllerTest extends TestCase
         $response->assertStatus(400)
             ->assertJson([
                 'success' => false,
-                'message' => __('exceptions.' . EmailAlreadyVerifiedException::class),
+                'message' => __('exceptions.'.EmailAlreadyVerifiedException::class),
             ]);
     }
 
@@ -174,7 +181,7 @@ class EmailVerificationControllerTest extends TestCase
         $response->assertStatus(400)
             ->assertJson([
                 'success' => false,
-                'message' => __('exceptions.' . EmailAlreadyVerifiedException::class),
+                'message' => __('exceptions.'.EmailAlreadyVerifiedException::class),
             ]);
     }
 
@@ -219,13 +226,13 @@ class EmailVerificationControllerTest extends TestCase
         $this->assertStringContainsString('|', $token);
 
         $this->assertDatabaseHas('personal_access_tokens', [
-            'tokenable_id' => $this->user->id,
+            'tokenable_id' => $this->domainUser->id,
         ]);
     }
 
     public function test_it_uses_signed_middleware(): void
     {
-        $unsignedUrl = self::EMAIL_VERIFY_API . "/{$this->user->id}/" . sha1($this->user->getEmailForVerification());
+        $unsignedUrl = self::EMAIL_VERIFY_API."/{$this->domainUser->id}/".sha1($this->domainUser->email);
 
         $response = $this->getJson($unsignedUrl);
         $response->assertStatus(403);

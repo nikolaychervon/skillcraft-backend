@@ -13,8 +13,7 @@ class PasswordResetNotification extends EmailNotification
     public function __construct(
         private readonly string $email,
         private readonly string $resetToken,
-    ) {
-    }
+    ) {}
 
     public function toMail($notifiable): MailMessage
     {
@@ -27,6 +26,7 @@ class PasswordResetNotification extends EmailNotification
     protected function generateResetUrl(): string
     {
         $frontendUrl = config('app.url');
+
         return "$frontendUrl/reset-password?reset_token=$this->resetToken&email=$this->email";
     }
 }

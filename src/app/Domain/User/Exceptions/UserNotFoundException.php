@@ -12,7 +12,7 @@ class UserNotFoundException extends ApiException
     protected HttpCode $statusCode = HttpCode::NotFound;
 
     /**
-     * @param array<string, mixed> $searchData
+     * @param  array<string, mixed>  $searchData
      */
     public function __construct(private readonly array $searchData)
     {

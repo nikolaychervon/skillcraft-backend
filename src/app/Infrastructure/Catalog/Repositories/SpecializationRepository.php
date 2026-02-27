@@ -5,21 +5,30 @@ declare(strict_types=1);
 namespace App\Infrastructure\Catalog\Repositories;
 
 use App\Domain\Catalog\Repositories\SpecializationRepositoryInterface;
-use App\Models\Specialization;
+use App\Domain\Catalog\Specialization;
+use App\Infrastructure\Catalog\Mappers\SpecializationMapper;
+use App\Models\Specialization as SpecializationModel;
 use Illuminate\Support\Collection;
 
-/** Eloquent-реализация без кэша; кэш навешивается декоратором. */
 final class SpecializationRepository implements SpecializationRepositoryInterface
 {
+    public function __construct(
+        private readonly SpecializationMapper $mapper,
+    ) {}
+
+    /** @return Collection<int, Specialization> */
     public function getAll(): Collection
     {
-        return Specialization::query()
+        return SpecializationModel::query()
             ->orderBy('name')
-            ->get();
+            ->get()
+            ->map(fn (SpecializationModel $m): Specialization => $this->mapper->toDomain($m));
     }
 
     public function findById(int $id): ?Specialization
     {
-        return Specialization::query()->find($id);
+        $model = SpecializationModel::query()->find($id);
+
+        return $model !== null ? $this->mapper->toDomain($model) : null;
     }
 }

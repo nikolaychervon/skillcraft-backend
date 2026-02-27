@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Application\RequestData;
 
-use App\Application\Shared\Exceptions\RequestData\RequestDataAssemblyException;
+use App\Domain\Shared\Exceptions\RequestDataAssemblyException;
 use PHPUnit\Framework\TestCase;
 use Tests\Fakes\RequestDataAssembler\TestNoConstructorRequestData;
 use Tests\Fakes\RequestDataAssembler\TestUserRequestData;

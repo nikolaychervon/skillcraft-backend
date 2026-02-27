@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\User\Repositories;
 
-use App\Models\User;
+use App\Domain\User\User;
 
 interface UserRepositoryInterface
 {
@@ -14,13 +14,17 @@ interface UserRepositoryInterface
     /** Поиск пользователя по email. */
     public function findByEmail(string $email): ?User;
 
-    /** Создание пользователя. $userData должен содержать уже хешированный пароль (ключ password). */
+    /**
+     * Создание пользователя. $userData должен содержать уже хешированный пароль (ключ password).
+     *
+     * @param  array<string, mixed>  $userData
+     */
     public function create(array $userData): User;
 
     /**
      * Обновление атрибутов пользователя.
      *
-     * @param array<string, mixed> $attributes
+     * @param  array<string, mixed>  $attributes
      */
     public function update(User $user, array $attributes): User;
 
@@ -32,4 +36,7 @@ interface UserRepositoryInterface
 
     /** Подтверждение смены email: перенос pending_email в email, сброс pending. */
     public function confirmPendingEmail(User $user): void;
+
+    /** Отметить email пользователя как подтверждённый. */
+    public function markEmailVerified(User $user): void;
 }

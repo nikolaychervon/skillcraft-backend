@@ -7,12 +7,8 @@ namespace App\Application\User\Auth;
 use App\Domain\User\Auth\RequestData\CreatingUserRequestData;
 use App\Domain\User\Auth\Services\HashServiceInterface;
 use App\Domain\User\Repositories\UserRepositoryInterface;
-use App\Models\User;
+use App\Domain\User\User;
 
-/**
- * Создание нового пользователя с хешированным паролем.
- * Используется в RegisterUser, когда email ещё не зарегистрирован.
- */
 final readonly class CreateNewUser
 {
     public function __construct(

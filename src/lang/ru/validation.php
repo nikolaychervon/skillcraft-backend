@@ -20,7 +20,7 @@ return [
         ],
         'password' => [
             'min' => ':attribute должен быть минимум :min символов.',
-            'confirmed' => 'Пароли не совпадают.'
+            'confirmed' => 'Пароли не совпадают.',
         ],
         'unique_nickname' => [
             'regex' => ':attribute должен включать только латиницу, _ и -',

@@ -6,9 +6,10 @@ namespace App\Application\Shared\Constants;
 
 class MentorPersonaConstants
 {
-    public const string STRICT = 'strict';
-    public const string FRIENDLY = 'friendly';
-    public const string NEUTRAL = 'neutral';
+    public const string
+        STRICT = 'strict',
+        FRIENDLY = 'friendly',
+        NEUTRAL = 'neutral';
 
     public const array LIST = [
         self::STRICT,

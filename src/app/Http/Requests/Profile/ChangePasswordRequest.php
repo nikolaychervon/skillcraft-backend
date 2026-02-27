@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Profile;
 
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules\Password;
+use App\Http\Requests\Base\AuthenticatedRequest;
+use App\Http\Requests\Rules\ValidationRules;
 
-class ChangePasswordRequest extends FormRequest
+class ChangePasswordRequest extends AuthenticatedRequest
 {
     public function rules(): array
     {
         return [
             'old_password' => 'required|string',
-            'password' => ['required', 'confirmed', Password::min(8)->max(30)->numbers()->symbols()],
+            'password' => ['confirmed', ...ValidationRules::passwordRequired()],
         ];
     }
 }

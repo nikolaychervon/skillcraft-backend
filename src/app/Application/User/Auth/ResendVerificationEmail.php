@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace App\Application\User\Auth;
 
-use App\Domain\User\Exceptions\Email\EmailAlreadyVerifiedException;
 use App\Domain\User\Auth\RequestData\ResendEmailRequestData;
 use App\Domain\User\Auth\Services\NotificationServiceInterface;
+use App\Domain\User\Exceptions\Email\EmailAlreadyVerifiedException;
 use App\Domain\User\Repositories\UserRepositoryInterface;
-use App\Models\User;
 
 /**
  * Переотправка письма подтверждения email на указанный адрес.
@@ -25,12 +24,12 @@ final readonly class ResendVerificationEmail
     public function run(ResendEmailRequestData $data): void
     {
         $user = $this->userRepository->findByEmail($data->email);
-        if (!$user instanceof User) {
+        if ($user === null) {
             return;
         }
 
         if ($user->hasVerifiedEmail()) {
-            throw new EmailAlreadyVerifiedException();
+            throw new EmailAlreadyVerifiedException;
         }
 
         $this->notificationService->sendEmailVerificationNotification($user);

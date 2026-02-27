@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Catalog\Repositories;
 
-use App\Models\ProgrammingLanguage;
+use App\Domain\Catalog\ProgrammingLanguage;
 use Illuminate\Support\Collection;
 
 interface ProgrammingLanguageRepositoryInterface
@@ -16,4 +16,3 @@ interface ProgrammingLanguageRepositoryInterface
      */
     public function getBySpecializationId(int $specializationId): Collection;
 }
-

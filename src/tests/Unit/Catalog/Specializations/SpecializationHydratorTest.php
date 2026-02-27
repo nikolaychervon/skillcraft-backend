@@ -2,8 +2,8 @@
 
 namespace Tests\Unit\Catalog\Specializations;
 
+use App\Domain\Catalog\Specialization;
 use App\Infrastructure\Catalog\Hydrators\SpecializationHydrator;
-use App\Models\Specialization;
 use Illuminate\Support\Collection;
 use Tests\TestCase;
 
@@ -14,21 +14,14 @@ class SpecializationHydratorTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->hydrator = new SpecializationHydrator();
+        $this->hydrator = new SpecializationHydrator;
     }
 
-    public function test_to_array_returns_model_attributes(): void
+    public function test_to_array_returns_domain_attributes(): void
     {
-        $model = new Specialization();
-        $model->setRawAttributes([
-            'id' => 1,
-            'key' => 'backend',
-            'name' => 'Backend',
-            'created_at' => '2026-01-01 00:00:00',
-            'updated_at' => '2026-01-01 00:00:00',
-        ]);
+        $specialization = new Specialization(1, 'backend', 'Backend');
 
-        $result = $this->hydrator->toArray($model);
+        $result = $this->hydrator->toArray($specialization);
 
         $this->assertIsArray($result);
         $this->assertArrayHasKey('id', $result);
@@ -39,32 +32,30 @@ class SpecializationHydratorTest extends TestCase
         $this->assertSame('Backend', $result['name']);
     }
 
-    public function test_from_array_returns_model_with_attributes(): void
+    public function test_from_array_returns_domain_with_attributes(): void
     {
         $data = [
             'id' => 2,
             'key' => 'frontend',
             'name' => 'Frontend',
-            'created_at' => '2026-01-02 00:00:00',
-            'updated_at' => '2026-01-02 00:00:00',
         ];
 
-        $model = $this->hydrator->fromArray($data);
+        $specialization = $this->hydrator->fromArray($data);
 
-        $this->assertInstanceOf(Specialization::class, $model);
-        $this->assertSame(2, $model->id);
-        $this->assertSame('frontend', $model->key);
-        $this->assertSame('Frontend', $model->name);
+        $this->assertInstanceOf(Specialization::class, $specialization);
+        $this->assertSame(2, $specialization->id);
+        $this->assertSame('frontend', $specialization->key);
+        $this->assertSame('Frontend', $specialization->name);
     }
 
     public function test_to_array_collection_serializes_collection(): void
     {
-        $models = collect([
-            (new Specialization())->setRawAttributes(['id' => 1, 'key' => 'a', 'name' => 'A', 'created_at' => null, 'updated_at' => null]),
-            (new Specialization())->setRawAttributes(['id' => 2, 'key' => 'b', 'name' => 'B', 'created_at' => null, 'updated_at' => null]),
+        $items = collect([
+            new Specialization(1, 'a', 'A'),
+            new Specialization(2, 'b', 'B'),
         ]);
 
-        $result = $this->hydrator->toArrayCollection($models);
+        $result = $this->hydrator->toArrayCollection($items);
 
         $this->assertIsArray($result);
         $this->assertCount(2, $result);
@@ -77,8 +68,8 @@ class SpecializationHydratorTest extends TestCase
     public function test_from_array_collection_deserializes_to_collection(): void
     {
         $data = [
-            ['id' => 10, 'key' => 'x', 'name' => 'X', 'created_at' => null, 'updated_at' => null],
-            ['id' => 20, 'key' => 'y', 'name' => 'Y', 'created_at' => null, 'updated_at' => null],
+            ['id' => 10, 'key' => 'x', 'name' => 'X'],
+            ['id' => 20, 'key' => 'y', 'name' => 'Y'],
         ];
 
         $collection = $this->hydrator->fromArrayCollection($data);
@@ -92,20 +83,13 @@ class SpecializationHydratorTest extends TestCase
 
     public function test_roundtrip_to_array_and_from_array_preserves_data(): void
     {
-        $model = new Specialization();
-        $model->setRawAttributes([
-            'id' => 7,
-            'key' => 'roundtrip',
-            'name' => 'Roundtrip',
-            'created_at' => '2026-02-01 12:00:00',
-            'updated_at' => '2026-02-01 12:00:00',
-        ]);
+        $specialization = new Specialization(7, 'roundtrip', 'Roundtrip');
 
-        $array = $this->hydrator->toArray($model);
+        $array = $this->hydrator->toArray($specialization);
         $restored = $this->hydrator->fromArray($array);
 
-        $this->assertSame($model->id, $restored->id);
-        $this->assertSame($model->key, $restored->key);
-        $this->assertSame($model->name, $restored->name);
+        $this->assertSame($specialization->id, $restored->id);
+        $this->assertSame($specialization->key, $restored->key);
+        $this->assertSame($specialization->name, $restored->name);
     }
 }
