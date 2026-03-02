@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace App\Domain\User;
 
+use App\Domain\Shared\DomainModel;
 use DateTimeImmutable;
 
 /** Доменная сущность пользователя (read-only). */
-final readonly class User
+final readonly class User extends DomainModel
 {
     public function __construct(
         public int $id,

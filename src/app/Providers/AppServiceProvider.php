@@ -24,7 +24,7 @@ use App\Infrastructure\User\Profile\Services\ProfileNotificationService;
 use App\Infrastructure\User\Repositories\UserRepository;
 use Illuminate\Support\ServiceProvider;
 
-class AppServiceProvider extends ServiceProvider
+final class AppServiceProvider extends ServiceProvider
 {
     public $bindings = [
         // Репозиторий пользователей

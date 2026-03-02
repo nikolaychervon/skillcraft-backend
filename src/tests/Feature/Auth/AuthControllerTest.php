@@ -92,28 +92,26 @@ class AuthControllerTest extends TestCase
 
     public function test_it_validates_required_fields_on_register(): void
     {
-        $response = $this->postJson(self::REGISTER_API, []);
-
-        $response->assertStatus(422)
-            ->assertJsonValidationErrors(['first_name', 'last_name', 'email', 'password', 'unique_nickname']);
+        $this->assertApiValidationErrors(
+            $this->postJson(self::REGISTER_API, []),
+            ['first_name', 'last_name', 'email', 'password', 'unique_nickname']
+        );
     }
 
     public function test_it_validates_email_format(): void
     {
-        $response = $this->postJson(self::REGISTER_API, $this->registerPayload([
-            'email' => 'not-an-email',
-        ]));
-
-        $response->assertStatus(422)->assertJsonValidationErrors(['email']);
+        $this->assertApiValidationErrors(
+            $this->postJson(self::REGISTER_API, $this->registerPayload(['email' => 'not-an-email'])),
+            ['email']
+        );
     }
 
     public function test_it_validates_unique_nickname_format(): void
     {
-        $response = $this->postJson(self::REGISTER_API, $this->registerPayload([
-            'unique_nickname' => 'никнейм-с-кириллицей',
-        ]));
-
-        $response->assertStatus(422)->assertJsonValidationErrors(['unique_nickname']);
+        $this->assertApiValidationErrors(
+            $this->postJson(self::REGISTER_API, $this->registerPayload(['unique_nickname' => 'никнейм-с-кириллицей'])),
+            ['unique_nickname']
+        );
     }
 
     public function test_it_logins_user_successfully(): void
@@ -160,9 +158,10 @@ class AuthControllerTest extends TestCase
 
     public function test_it_validates_login_fields(): void
     {
-        $response = $this->postJson(self::LOGIN_API, []);
-
-        $response->assertStatus(422)->assertJsonValidationErrors(['email', 'password']);
+        $this->assertApiValidationErrors(
+            $this->postJson(self::LOGIN_API, []),
+            ['email', 'password']
+        );
     }
 
     public function test_it_logouts_user_successfully(): void

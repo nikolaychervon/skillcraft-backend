@@ -7,7 +7,7 @@ namespace App\Application\Shared\Exceptions\Http;
 use App\Application\Shared\Exceptions\ApiException;
 use App\Support\Http\HttpCode;
 
-class TooManyRequestsHttpException extends ApiException
+final class TooManyRequestsHttpException extends ApiException
 {
     protected HttpCode $statusCode = HttpCode::TooManyRequests;
 }

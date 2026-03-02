@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Shared\Constants;
 
-class MentorPersonaConstants
+final class MentorPersonaConstants
 {
     public const string
         STRICT = 'strict',

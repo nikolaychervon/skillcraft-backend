@@ -8,7 +8,7 @@ use App\Domain\User\Auth\Constants\AuthConstants;
 use App\Infrastructure\Notifications\Base\EmailNotification;
 use Illuminate\Notifications\Messages\MailMessage;
 
-class PasswordResetNotification extends EmailNotification
+final class PasswordResetNotification extends EmailNotification
 {
     public function __construct(
         private readonly string $email,

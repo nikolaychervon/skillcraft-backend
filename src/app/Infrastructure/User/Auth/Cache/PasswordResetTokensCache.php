@@ -8,7 +8,7 @@ use App\Domain\User\Auth\Cache\PasswordResetTokensCacheInterface;
 use App\Domain\User\Auth\Constants\AuthConstants;
 use Illuminate\Support\Facades\Cache;
 
-class PasswordResetTokensCache implements PasswordResetTokensCacheInterface
+final class PasswordResetTokensCache implements PasswordResetTokensCacheInterface
 {
     private const string PREFIX = 'password_reset_';
 

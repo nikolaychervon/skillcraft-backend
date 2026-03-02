@@ -14,7 +14,7 @@ use App\Infrastructure\Catalog\Repositories\ProgrammingLanguageRepository;
 use App\Infrastructure\Catalog\Repositories\SpecializationRepository;
 use Illuminate\Support\ServiceProvider;
 
-class CatalogServiceProvider extends ServiceProvider
+final class CatalogServiceProvider extends ServiceProvider
 {
     public $bindings = [
         CatalogCacheInterface::class => CatalogCache::class,

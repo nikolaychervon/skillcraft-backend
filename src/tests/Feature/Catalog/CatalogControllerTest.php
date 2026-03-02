@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Catalog;
 
+use App\Application\Shared\Constants\LevelsConstants;
+use App\Application\Shared\Constants\MentorPersonaConstants;
 use App\Models\ProgrammingLanguage;
 use App\Models\Specialization;
 use App\Models\Track;
@@ -16,6 +18,8 @@ class CatalogControllerTest extends TestCase
 
     private const string SPECIALIZATIONS_API = '/api/v1/catalog/specializations';
     private const string SPECIALIZATION_LANGUAGES_API = '/api/v1/catalog/specializations/%d/languages';
+    private const string LEVELS_API = '/api/v1/catalog/levels';
+    private const string MENTOR_PERSONAS_API = '/api/v1/catalog/mentor-personas';
 
     public function test_specializations_returns_empty_list_when_no_data(): void
     {
@@ -76,5 +80,25 @@ class CatalogControllerTest extends TestCase
     public function test_specialization_languages_returns_404_for_nonexistent_specialization(): void
     {
         $this->getJson(sprintf(self::SPECIALIZATION_LANGUAGES_API, 99999))->assertStatus(404);
+    }
+
+    public function test_levels_returns_list_from_constants(): void
+    {
+        $response = $this->getJson(self::LEVELS_API);
+
+        $response->assertStatus(200)
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('data', LevelsConstants::LIST);
+        $this->assertSame(LevelsConstants::LIST, $response->json('data'));
+    }
+
+    public function test_mentor_personas_returns_list_from_constants(): void
+    {
+        $response = $this->getJson(self::MENTOR_PERSONAS_API);
+
+        $response->assertStatus(200)
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('data', MentorPersonaConstants::LIST);
+        $this->assertSame(MentorPersonaConstants::LIST, $response->json('data'));
     }
 }

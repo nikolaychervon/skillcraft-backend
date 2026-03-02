@@ -7,7 +7,7 @@ namespace App\Domain\User\Exceptions\Email;
 use App\Application\Shared\Exceptions\ApiException;
 use App\Support\Http\HttpCode;
 
-class EmailAlreadyVerifiedException extends ApiException
+final class EmailAlreadyVerifiedException extends ApiException
 {
     protected HttpCode $statusCode = HttpCode::BadRequest;
 }

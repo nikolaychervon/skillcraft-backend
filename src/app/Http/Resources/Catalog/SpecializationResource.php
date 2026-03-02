@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /** @mixin Specialization */
-class SpecializationResource extends JsonResource
+final class SpecializationResource extends JsonResource
 {
     /** @return array<string, mixed> */
     public function toArray(Request $request): array

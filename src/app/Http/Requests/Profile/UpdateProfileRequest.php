@@ -7,7 +7,7 @@ namespace App\Http\Requests\Profile;
 use App\Http\Requests\Base\AuthenticatedRequest;
 use App\Http\Requests\Rules\ValidationRules;
 
-class UpdateProfileRequest extends AuthenticatedRequest
+final class UpdateProfileRequest extends AuthenticatedRequest
 {
     protected function prepareForValidation(): void
     {

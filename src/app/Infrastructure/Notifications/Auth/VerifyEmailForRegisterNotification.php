@@ -9,7 +9,7 @@ use App\Infrastructure\Notifications\Base\EmailNotification;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\URL;
 
-class VerifyEmailForRegisterNotification extends EmailNotification
+final class VerifyEmailForRegisterNotification extends EmailNotification
 {
     public function __construct(
         private readonly int $userId,
@@ -34,7 +34,7 @@ class VerifyEmailForRegisterNotification extends EmailNotification
             now()->addMinutes(AuthConstants::EMAIL_VERIFICATION_TOKEN_TTL),
             [
                 'id' => $this->userId,
-                'hash' => sha1($this->email),
+                'hash' => hash('sha256', $this->email),
             ]
         );
     }

@@ -7,7 +7,7 @@ namespace App\Infrastructure\User\Auth\Services;
 use App\Domain\User\Auth\Services\HashServiceInterface;
 use Illuminate\Contracts\Hashing\Hasher;
 
-class HashService implements HashServiceInterface
+final class HashService implements HashServiceInterface
 {
     public function __construct(
         private readonly Hasher $hasher

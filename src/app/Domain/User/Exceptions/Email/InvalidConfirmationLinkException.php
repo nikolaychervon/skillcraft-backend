@@ -7,7 +7,7 @@ namespace App\Domain\User\Exceptions\Email;
 use App\Application\Shared\Exceptions\ApiException;
 use App\Support\Http\HttpCode;
 
-class InvalidConfirmationLinkException extends ApiException
+final class InvalidConfirmationLinkException extends ApiException
 {
-    protected HttpCode $statusCode = HttpCode::BadRequest;
+    protected HttpCode $statusCode = HttpCode::Forbidden;
 }

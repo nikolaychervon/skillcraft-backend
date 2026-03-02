@@ -7,7 +7,7 @@ namespace App\Domain\User\Profile\Exceptions;
 use App\Application\Shared\Exceptions\ApiException;
 use App\Support\Http\HttpCode;
 
-class IncorrectCurrentPasswordException extends ApiException
+final class IncorrectCurrentPasswordException extends ApiException
 {
     protected HttpCode $statusCode = HttpCode::ValidationError;
 }

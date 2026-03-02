@@ -7,7 +7,7 @@ namespace App\Http\Requests\Profile;
 use App\Http\Requests\Base\AuthenticatedRequest;
 use Illuminate\Validation\Rule;
 
-class ChangeEmailRequest extends AuthenticatedRequest
+final class ChangeEmailRequest extends AuthenticatedRequest
 {
     public function rules(): array
     {

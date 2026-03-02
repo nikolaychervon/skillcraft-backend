@@ -7,7 +7,7 @@ namespace App\Domain\User\Auth\Exceptions;
 use App\Application\Shared\Exceptions\ApiException;
 use App\Support\Http\HttpCode;
 
-class InvalidResetTokenException extends ApiException
+final class InvalidResetTokenException extends ApiException
 {
     protected HttpCode $statusCode = HttpCode::ValidationError;
 }

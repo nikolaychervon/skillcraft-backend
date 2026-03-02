@@ -29,10 +29,10 @@ abstract class ApiException extends Exception
         return $this->statusCode;
     }
 
-    /** @return array<string, mixed>|null */
-    public function getData(): ?array
+    /** @return array<string, mixed> */
+    public function getData(): array
     {
-        return null;
+        return [];
     }
 
     protected function getTranslatedMessage(): string

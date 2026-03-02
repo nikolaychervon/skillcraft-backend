@@ -7,12 +7,14 @@ namespace Tests\Unit\Application\Exceptions;
 use App\Application\Shared\Exceptions\Http\NotFoundHttpException;
 use App\Application\Shared\Exceptions\Http\TooManyRequestsHttpException;
 use App\Application\Shared\Exceptions\Http\UnauthorizedException;
+use App\Domain\User\Exceptions\Email\InvalidConfirmationLinkException;
 use App\Domain\User\Exceptions\UserNotFoundException;
 use App\Http\ExceptionHandler;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Exceptions\InvalidSignatureException;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException as SymfonyNotFoundHttpException;
 use Tests\TestCase;
@@ -122,13 +124,32 @@ class ApiExceptionRenderTest extends TestCase
         $this->assertNull($response);
     }
 
-    public function test_it_returns_null_for_unknown_exception(): void
+    public function test_it_renders_invalid_signature_exception_as_403_json(): void
+    {
+        $exception = new InvalidSignatureException();
+        $request = Request::create('/api/v1/email/verify/1/abc', 'GET');
+
+        $response = ExceptionHandler::handle($exception, $request);
+
+        $this->assertInstanceOf(JsonResponse::class, $response);
+        $this->assertSame(403, $response->getStatusCode());
+        $payload = $response->getData(true);
+        $this->assertFalse($payload['success']);
+        $this->assertSame(__('exceptions.'.InvalidConfirmationLinkException::class), $payload['message']);
+    }
+
+    public function test_it_returns_json_500_for_unknown_exception_on_api_request(): void
     {
         $exception = new \RuntimeException('Something broke');
         $request = Request::create('/api/v1/test', 'GET');
 
         $response = ExceptionHandler::handle($exception, $request);
 
-        $this->assertNull($response);
+        $this->assertInstanceOf(JsonResponse::class, $response);
+        $this->assertSame(500, $response->getStatusCode());
+
+        $payload = $response->getData(true);
+        $this->assertFalse($payload['success']);
+        $this->assertArrayHasKey('message', $payload);
     }
 }

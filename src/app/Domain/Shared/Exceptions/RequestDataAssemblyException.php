@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Shared\Exceptions;
 
-class RequestDataAssemblyException extends \RuntimeException
+final class RequestDataAssemblyException extends \RuntimeException
 {
     public static function requestDataClassNotFound(string $requestDataClass, \Throwable $previous): self
     {

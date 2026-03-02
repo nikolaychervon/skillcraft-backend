@@ -7,7 +7,7 @@ namespace App\Http\Requests\Profile;
 use App\Http\Requests\Base\AuthenticatedRequest;
 use App\Http\Requests\Rules\ValidationRules;
 
-class ChangePasswordRequest extends AuthenticatedRequest
+final class ChangePasswordRequest extends AuthenticatedRequest
 {
     public function rules(): array
     {

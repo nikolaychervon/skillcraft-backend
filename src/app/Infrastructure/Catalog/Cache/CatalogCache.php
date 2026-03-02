@@ -13,11 +13,13 @@ use Illuminate\Support\Facades\Cache;
 
 final class CatalogCache implements CatalogCacheInterface
 {
-    private const int TTL_SECONDS = 60;
-
     private const string KEY_SPECIALIZATIONS = 'catalog.specializations';
 
     private const string KEY_SPECIALIZATION_LANGUAGES = 'catalog.specialization.%d.languages';
+
+    private const int SPECIALIZATIONS_TTL_SECONDS = 60;
+
+    private const int SPECIALIZATION_LANGUAGES_TTL_SECONDS = 60;
 
     public function __construct(
         private readonly SpecializationHydrator $specializationHydrator,
@@ -42,7 +44,7 @@ final class CatalogCache implements CatalogCacheInterface
     public function putSpecializations(Collection $specializations): void
     {
         $payload = $this->specializationHydrator->toArrayCollection($specializations);
-        Cache::put(self::KEY_SPECIALIZATIONS, json_encode($payload), self::TTL_SECONDS);
+        Cache::put(self::KEY_SPECIALIZATIONS, json_encode($payload), self::SPECIALIZATIONS_TTL_SECONDS);
     }
 
     public function deleteSpecializations(): void
@@ -71,6 +73,6 @@ final class CatalogCache implements CatalogCacheInterface
     {
         $key = sprintf(self::KEY_SPECIALIZATION_LANGUAGES, $specializationId);
         $payload = $this->languageHydrator->toArrayCollection($languages);
-        Cache::put($key, json_encode($payload), self::TTL_SECONDS);
+        Cache::put($key, json_encode($payload), self::SPECIALIZATION_LANGUAGES_TTL_SECONDS);
     }
 }

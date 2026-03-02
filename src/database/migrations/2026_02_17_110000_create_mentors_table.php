@@ -23,7 +23,7 @@ return new class extends Migration
                 ->default(LevelsConstants::UNSETTED);
 
             $table->string('how_to_call_me')->nullable();
-            $table->boolean('use_name_to_call_me')->default(false);
+            $table->boolean('use_name_to_call_me')->default(true);
 
             $table->enum('mentor_persona', MentorPersonaConstants::LIST)
                 ->default(MentorPersonaConstants::NEUTRAL);

@@ -7,7 +7,7 @@ namespace App\Infrastructure\User\Auth\Services;
 use App\Domain\User\Auth\Services\TransactionServiceInterface;
 use Illuminate\Support\Facades\DB;
 
-class TransactionService implements TransactionServiceInterface
+final class TransactionService implements TransactionServiceInterface
 {
     public function transaction(callable $callback): mixed
     {

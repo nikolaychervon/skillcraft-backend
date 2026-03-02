@@ -7,7 +7,7 @@ namespace App\Domain\User\Auth\Exceptions;
 use App\Application\Shared\Exceptions\ApiException;
 use App\Support\Http\HttpCode;
 
-class PasswordResetFailedException extends ApiException
+final class PasswordResetFailedException extends ApiException
 {
     protected HttpCode $statusCode = HttpCode::BadRequest;
 }

@@ -7,7 +7,7 @@ namespace App\Http\Requests\Auth;
 use App\Http\Requests\Rules\ValidationRules;
 use Illuminate\Foundation\Http\FormRequest;
 
-class LoginRequest extends FormRequest
+final class LoginRequest extends FormRequest
 {
     public function rules(): array
     {

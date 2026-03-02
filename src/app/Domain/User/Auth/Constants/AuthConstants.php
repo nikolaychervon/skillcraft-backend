@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\User\Auth\Constants;
 
-class AuthConstants
+final class AuthConstants
 {
     public const string DEFAULT_TOKEN_NAME = 'auth_token';
 

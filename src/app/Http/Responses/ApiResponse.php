@@ -24,17 +24,17 @@ final class ApiResponse
     public static function error(
         string $message = 'Error',
         HttpCode|int $code = HttpCode::BadRequest,
-        mixed $errors = null,
+        ?array $errors = null,
     ): JsonResponse {
         $payload = ['success' => false, 'message' => $message];
-        if ($errors !== null) {
+        if (is_array($errors) && !empty($errors)) {
             $payload['errors'] = $errors;
         }
 
         return response()->json($payload, self::statusCode($code));
     }
 
-    public static function validationError(mixed $errors = null, string $message = 'Validation Error'): JsonResponse
+    public static function validationError(?array $errors = null, string $message = 'Validation Error'): JsonResponse
     {
         return self::error($message, HttpCode::ValidationError, $errors);
     }

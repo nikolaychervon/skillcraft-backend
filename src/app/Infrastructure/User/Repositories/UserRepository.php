@@ -41,8 +41,8 @@ final class UserRepository implements UserRepositoryInterface
     /** @param array<string, mixed> $attributes */
     public function update(User $user, array $attributes): User
     {
-        $this->updateById($user->id, $attributes);
         $model = UserModel::query()->findOrFail($user->id);
+        $model->update($attributes);
 
         return $this->mapper->toDomain($model);
     }

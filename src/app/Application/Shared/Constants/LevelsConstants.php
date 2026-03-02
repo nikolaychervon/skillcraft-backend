@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Shared\Constants;
 
-class LevelsConstants
+final class LevelsConstants
 {
     public const string
         UNSETTED = 'NOT_SET',

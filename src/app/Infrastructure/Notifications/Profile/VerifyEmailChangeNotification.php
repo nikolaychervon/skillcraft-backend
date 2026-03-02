@@ -9,7 +9,7 @@ use App\Infrastructure\Notifications\Base\EmailNotification;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\URL;
 
-class VerifyEmailChangeNotification extends EmailNotification
+final class VerifyEmailChangeNotification extends EmailNotification
 {
     public function __construct(
         private readonly int $userId,
@@ -35,7 +35,7 @@ class VerifyEmailChangeNotification extends EmailNotification
             now()->addMinutes(ProfileConstants::EMAIL_CHANGE_VERIFICATION_TTL),
             [
                 'id' => $this->userId,
-                'hash' => sha1($this->pendingEmail),
+                'hash' => hash('sha256', $this->pendingEmail),
             ]
         );
     }

@@ -7,7 +7,7 @@ namespace App\Application\Shared\Exceptions\Http;
 use App\Application\Shared\Exceptions\ApiException;
 use App\Support\Http\HttpCode;
 
-class UnauthorizedException extends ApiException
+final class UnauthorizedException extends ApiException
 {
     protected HttpCode $statusCode = HttpCode::Unauthorized;
 }

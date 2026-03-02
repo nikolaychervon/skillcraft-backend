@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Catalog\CatalogController;
+use App\Http\Controllers\Mentor\MentorController;
 use App\Http\Controllers\Profile\EmailChangeVerificationController;
 use App\Http\Controllers\Profile\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -25,6 +26,8 @@ Route::prefix('v1')->group(function () {
             Route::post('/change-email', [ProfileController::class, 'changeEmail']);
             Route::post('/change-password', [ProfileController::class, 'changePassword']);
         });
+
+        Route::apiResource('mentors', MentorController::class);
     });
 
     Route::get('profile/verify-email-change/{id}/{hash}', [EmailChangeVerificationController::class, 'verify'])
@@ -49,5 +52,7 @@ Route::prefix('v1')->group(function () {
     Route::prefix('catalog')->group(function () {
         Route::get('specializations', [CatalogController::class, 'specializations']);
         Route::get('specializations/{specialization}/languages', [CatalogController::class, 'specializationLanguages']);
+        Route::get('levels', [CatalogController::class, 'levels']);
+        Route::get('mentor-personas', [CatalogController::class, 'mentorPersonas']);
     });
 });

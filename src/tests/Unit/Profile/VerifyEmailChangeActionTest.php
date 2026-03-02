@@ -31,7 +31,7 @@ class VerifyEmailChangeActionTest extends TestCase
             pendingEmail: 'new@example.com',
             emailVerifiedAt: new DateTimeImmutable(),
         );
-        $hash = sha1('new@example.com');
+        $hash = hash('sha256', 'new@example.com');
 
         $repo = Mockery::mock(UserRepositoryInterface::class);
         $repo->shouldReceive('findById')->once()->with(1)->andReturn($user);
@@ -53,7 +53,7 @@ class VerifyEmailChangeActionTest extends TestCase
 
         $this->expectException(UserNotFoundException::class);
 
-        $action->run(999, sha1('any@example.com'));
+        $action->run(999, hash('sha256', 'any@example.com'));
     }
 
     public function test_it_throws_invalid_link_when_no_pending_email(): void
@@ -78,7 +78,7 @@ class VerifyEmailChangeActionTest extends TestCase
 
         $this->expectException(InvalidConfirmationLinkException::class);
 
-        $action->run(1, sha1('new@example.com'));
+        $action->run(1, hash('sha256', 'new@example.com'));
     }
 
     public function test_it_throws_invalid_link_when_hash_does_not_match(): void
@@ -103,6 +103,6 @@ class VerifyEmailChangeActionTest extends TestCase
 
         $this->expectException(InvalidConfirmationLinkException::class);
 
-        $action->run(1, sha1('wrong@example.com'));
+        $action->run(1, hash('sha256', 'wrong@example.com'));
     }
 }

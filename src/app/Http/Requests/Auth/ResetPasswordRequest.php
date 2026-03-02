@@ -7,7 +7,7 @@ namespace App\Http\Requests\Auth;
 use App\Http\Requests\Rules\ValidationRules;
 use Illuminate\Foundation\Http\FormRequest;
 
-class ResetPasswordRequest extends FormRequest
+final class ResetPasswordRequest extends FormRequest
 {
     public function rules(): array
     {

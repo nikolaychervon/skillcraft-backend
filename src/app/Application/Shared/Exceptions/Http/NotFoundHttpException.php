@@ -7,7 +7,7 @@ namespace App\Application\Shared\Exceptions\Http;
 use App\Application\Shared\Exceptions\ApiException;
 use App\Support\Http\HttpCode;
 
-class NotFoundHttpException extends ApiException
+final class NotFoundHttpException extends ApiException
 {
     protected HttpCode $statusCode = HttpCode::NotFound;
 }
