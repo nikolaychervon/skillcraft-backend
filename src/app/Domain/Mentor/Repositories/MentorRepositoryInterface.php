@@ -16,5 +16,7 @@ interface MentorRepositoryInterface
 
     public function create(array $data): Mentor;
 
+    public function update(int $id, array $data): Mentor;
+
     public function delete(int $id): void;
 }

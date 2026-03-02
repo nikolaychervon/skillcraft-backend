@@ -52,5 +52,7 @@ Route::prefix('v1')->group(function () {
     Route::prefix('catalog')->group(function () {
         Route::get('specializations', [CatalogController::class, 'specializations']);
         Route::get('specializations/{specialization}/languages', [CatalogController::class, 'specializationLanguages']);
+        Route::get('levels', [CatalogController::class, 'levels']);
+        Route::get('mentor-personas', [CatalogController::class, 'mentorPersonas']);
     });
 });

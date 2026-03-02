@@ -8,17 +8,18 @@ use App\Application\Mentor\CreateNewMentor;
 use App\Application\Mentor\DeleteMentor;
 use App\Application\Mentor\GetMentor;
 use App\Application\Mentor\GetUserMentors;
+use App\Application\Mentor\UpdateMentor;
 use App\Domain\Mentor\RequestData\CreateNewMentorRequestData;
+use App\Domain\Mentor\RequestData\UpdateMentorRequestData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Base\AuthenticatedRequest;
 use App\Http\Requests\Mentor\StoreMentorRequest;
+use App\Http\Requests\Mentor\UpdateMentorRequest;
 use App\Http\Resources\Mentor\MentorItemResource;
 use App\Http\Resources\Mentor\MentorResource;
 use App\Http\Responses\ApiResponse;
-use App\Models\Mentor;
 use App\Support\Http\HttpCode;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 final class MentorController extends Controller
 {
@@ -47,11 +48,15 @@ final class MentorController extends Controller
         return ApiResponse::success(data: MentorResource::make($mentorDomain));
     }
 
-    public function update(Request $request, Mentor $mentor): JsonResponse
+    public function update(UpdateMentorRequest $request, int $mentorId, UpdateMentor $updateMentor): JsonResponse
     {
-        $this->authorize('update', $mentor);
+        $requestData = UpdateMentorRequestData::fromArray($request->validated());
+        $mentorDomain = $updateMentor->run($requestData, $mentorId, $request->getDomainUser()->id);
 
-        return response()->json([]);
+        return ApiResponse::success(
+            message: __('messages.mentor.updated'),
+            data: MentorResource::make($mentorDomain),
+        );
     }
 
     public function destroy(AuthenticatedRequest $request, int $mentorId, DeleteMentor $deleteMentor): JsonResponse

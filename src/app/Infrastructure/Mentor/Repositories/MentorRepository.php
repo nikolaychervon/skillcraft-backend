@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Mentor\Repositories;
 
+use App\Application\Shared\Exceptions\Http\NotFoundHttpException;
 use App\Domain\Mentor\Mentor;
 use App\Infrastructure\Mentor\Mappers\MentorMapper;
 use App\Models\Mentor as MentorModel;
@@ -45,11 +46,22 @@ final class MentorRepository implements MentorRepositoryInterface
         return $this->mapper->toDomain($mentorModel);
     }
 
+    public function update(int $id, array $data): Mentor
+    {
+        $model = MentorModel::query()->find($id);
+        if ($model === null) {
+            throw new NotFoundHttpException;
+        }
+
+        $model->update($data);
+        $model->load(['track.specialization', 'track.programmingLanguage']);
+
+        return $this->mapper->toDomain($model);
+    }
+
     public function delete(int $id): void
     {
         $model = MentorModel::query()->find($id);
-        if ($model !== null) {
-            $model->delete();
-        }
+        $model?->delete();
     }
 }
