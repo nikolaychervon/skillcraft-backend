@@ -30,7 +30,7 @@ final readonly class VerifyEmail
             throw new EmailAlreadyVerifiedException;
         }
 
-        if (!hash_equals($hash, sha1($user->email))) {
+        if (!hash_equals($hash, hash('sha256', $user->email))) {
             throw new InvalidConfirmationLinkException;
         }
 

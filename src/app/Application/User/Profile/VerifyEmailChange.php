@@ -26,7 +26,7 @@ final readonly class VerifyEmailChange
             throw new InvalidConfirmationLinkException;
         }
 
-        if (!hash_equals($hash, sha1($user->pendingEmail))) {
+        if (!hash_equals($hash, hash('sha256', $user->pendingEmail))) {
             throw new InvalidConfirmationLinkException;
         }
 

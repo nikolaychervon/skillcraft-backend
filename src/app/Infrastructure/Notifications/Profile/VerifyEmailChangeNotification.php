@@ -35,7 +35,7 @@ final class VerifyEmailChangeNotification extends EmailNotification
             now()->addMinutes(ProfileConstants::EMAIL_CHANGE_VERIFICATION_TTL),
             [
                 'id' => $this->userId,
-                'hash' => sha1($this->pendingEmail),
+                'hash' => hash('sha256', $this->pendingEmail),
             ]
         );
     }

@@ -34,7 +34,7 @@ final class VerifyEmailForRegisterNotification extends EmailNotification
             now()->addMinutes(AuthConstants::EMAIL_VERIFICATION_TOKEN_TTL),
             [
                 'id' => $this->userId,
-                'hash' => sha1($this->email),
+                'hash' => hash('sha256', $this->email),
             ]
         );
     }

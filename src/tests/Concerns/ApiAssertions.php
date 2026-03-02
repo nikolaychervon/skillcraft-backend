@@ -23,4 +23,20 @@ trait ApiAssertions
             $response->assertJsonPath('message', $message);
         }
     }
+
+    protected function assertApiForbidden(TestResponse $response, ?string $message = null): void
+    {
+        $response->assertStatus(403)->assertJsonPath('success', false);
+        if ($message !== null) {
+            $response->assertJsonPath('message', $message);
+        }
+    }
+
+    /**
+     * @param  array<int|string, string|array<int, string>>  $errors  e.g. ['email' => 'Required'] or ['email', 'password']
+     */
+    protected function assertApiValidationErrors(TestResponse $response, array $errors): void
+    {
+        $response->assertStatus(422)->assertJsonPath('success', false)->assertJsonValidationErrors($errors);
+    }
 }

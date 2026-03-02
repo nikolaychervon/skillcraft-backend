@@ -38,6 +38,53 @@ class MentorControllerTest extends TestCase
         $this->track = Track::query()->firstOrFail();
     }
 
+    /**
+     * @param  array<string, mixed>  $overrides
+     * @return array<string, mixed>
+     */
+    private function mentorAttributes(array $overrides = []): array
+    {
+        return array_merge([
+            'user_id' => $this->user->id,
+            'track_id' => $this->track->id,
+            'name' => 'Test Mentor',
+            'slug' => 'test-mentor-'.substr(uniqid(), -8),
+            'target_level' => LevelsConstants::MIDDLE,
+            'current_level' => LevelsConstants::UNSETTED,
+            'how_to_call_me' => null,
+            'use_name_to_call_me' => true,
+            'mentor_persona' => MentorPersonaConstants::NEUTRAL,
+        ], $overrides);
+    }
+
+    /**
+     * @param  array<string, mixed>  $overrides
+     * @return MentorModel
+     */
+    private function createMentor(User $user, array $overrides = []): MentorModel
+    {
+        $attrs = $this->mentorAttributes(array_merge(['user_id' => $user->id], $overrides));
+
+        return MentorModel::query()->create($attrs);
+    }
+
+    /**
+     * @param  array<string, mixed>  $overrides
+     * @return array<string, mixed>
+     */
+    private function storeMentorPayload(array $overrides = []): array
+    {
+        return array_merge([
+            'specialization_id' => $this->track->specialization_id,
+            'programming_language_id' => $this->track->programming_language_id,
+            'name' => 'New Mentor',
+            'slug' => 'new-mentor-'.substr(uniqid(), -8),
+            'use_name_to_call_me' => true,
+            'target_level' => LevelsConstants::SENIOR,
+            'mentor_persona' => MentorPersonaConstants::STRICT,
+        ], $overrides);
+    }
+
     public function test_it_requires_authentication_for_mentor_routes(): void
     {
         $this->getJson(self::MENTORS_API)->assertStatus(401);
@@ -57,17 +104,7 @@ class MentorControllerTest extends TestCase
 
     public function test_index_returns_user_mentors(): void
     {
-        MentorModel::query()->create([
-            'user_id' => $this->user->id,
-            'track_id' => $this->track->id,
-            'name' => 'My Mentor',
-            'slug' => 'my-mentor-'.uniqid(),
-            'target_level' => LevelsConstants::MIDDLE,
-            'current_level' => LevelsConstants::UNSETTED,
-            'how_to_call_me' => null,
-            'use_name_to_call_me' => true,
-            'mentor_persona' => MentorPersonaConstants::FRIENDLY,
-        ]);
+        $this->createMentor($this->user, ['name' => 'My Mentor', 'mentor_persona' => MentorPersonaConstants::FRIENDLY]);
 
         $response = $this->actingAs($this->user)->getJson(self::MENTORS_API);
 
@@ -78,15 +115,7 @@ class MentorControllerTest extends TestCase
 
     public function test_store_creates_mentor_and_returns_201(): void
     {
-        $payload = [
-            'specialization_id' => $this->track->specialization_id,
-            'programming_language_id' => $this->track->programming_language_id,
-            'name' => 'New Mentor',
-            'slug' => 'new-mentor-'.substr(uniqid(), -8),
-            'use_name_to_call_me' => true,
-            'target_level' => LevelsConstants::SENIOR,
-            'mentor_persona' => MentorPersonaConstants::STRICT,
-        ];
+        $payload = $this->storeMentorPayload();
 
         $response = $this->actingAs($this->user)->postJson(self::MENTORS_API, $payload);
 
@@ -101,53 +130,30 @@ class MentorControllerTest extends TestCase
 
     public function test_store_validates_required_fields(): void
     {
-        $response = $this->actingAs($this->user)->postJson(self::MENTORS_API, []);
-
-        $response->assertStatus(422)
-            ->assertJsonValidationErrors(['specialization_id', 'programming_language_id', 'name', 'slug', 'use_name_to_call_me', 'target_level', 'mentor_persona']);
+        $this->assertApiValidationErrors(
+            $this->actingAs($this->user)->postJson(self::MENTORS_API, []),
+            ['specialization_id', 'programming_language_id', 'name', 'slug', 'use_name_to_call_me', 'target_level', 'mentor_persona']
+        );
     }
 
     public function test_store_rejects_duplicate_slug(): void
     {
         $slug = 'unique-slug-'.substr(uniqid(), -8);
-        MentorModel::query()->create([
-            'user_id' => $this->user->id,
-            'track_id' => $this->track->id,
-            'name' => 'Existing',
-            'slug' => $slug,
-            'target_level' => LevelsConstants::MIDDLE,
-            'current_level' => LevelsConstants::UNSETTED,
-            'how_to_call_me' => null,
-            'use_name_to_call_me' => true,
-            'mentor_persona' => MentorPersonaConstants::NEUTRAL,
-        ]);
+        $this->createMentor($this->user, ['name' => 'Existing', 'slug' => $slug]);
 
-        $response = $this->actingAs($this->user)->postJson(self::MENTORS_API, [
-            'specialization_id' => $this->track->specialization_id,
-            'programming_language_id' => $this->track->programming_language_id,
+        $response = $this->actingAs($this->user)->postJson(self::MENTORS_API, $this->storeMentorPayload([
             'name' => 'Another',
             'slug' => $slug,
-            'use_name_to_call_me' => true,
             'target_level' => LevelsConstants::MIDDLE,
             'mentor_persona' => MentorPersonaConstants::FRIENDLY,
-        ]);
+        ]));
 
         $response->assertStatus(422)->assertJsonValidationErrors(['slug']);
     }
 
     public function test_show_returns_mentor_when_owned_by_user(): void
     {
-        $mentor = MentorModel::query()->create([
-            'user_id' => $this->user->id,
-            'track_id' => $this->track->id,
-            'name' => 'Show Me',
-            'slug' => 'show-me-'.uniqid(),
-            'target_level' => LevelsConstants::MIDDLE,
-            'current_level' => LevelsConstants::UNSETTED,
-            'how_to_call_me' => null,
-            'use_name_to_call_me' => true,
-            'mentor_persona' => MentorPersonaConstants::NEUTRAL,
-        ]);
+        $mentor = $this->createMentor($this->user, ['name' => 'Show Me']);
 
         $response = $this->actingAs($this->user)->getJson(self::MENTORS_API . '/' . $mentor->id);
 
@@ -166,17 +172,7 @@ class MentorControllerTest extends TestCase
     public function test_show_returns_404_when_mentor_belongs_to_another_user(): void
     {
         $otherUser = $this->createVerifiedUser(['email' => 'other-mentor@example.com']);
-        $mentor = MentorModel::query()->create([
-            'user_id' => $otherUser->id,
-            'track_id' => $this->track->id,
-            'name' => 'Other Mentor',
-            'slug' => 'other-mentor-'.uniqid(),
-            'target_level' => LevelsConstants::MIDDLE,
-            'current_level' => LevelsConstants::UNSETTED,
-            'how_to_call_me' => null,
-            'use_name_to_call_me' => true,
-            'mentor_persona' => MentorPersonaConstants::NEUTRAL,
-        ]);
+        $mentor = $this->createMentor($otherUser, ['name' => 'Other Mentor']);
 
         $response = $this->actingAs($this->user)->getJson(self::MENTORS_API . '/' . $mentor->id);
 
@@ -185,17 +181,7 @@ class MentorControllerTest extends TestCase
 
     public function test_update_modifies_mentor_when_owned_by_user(): void
     {
-        $mentor = MentorModel::query()->create([
-            'user_id' => $this->user->id,
-            'track_id' => $this->track->id,
-            'name' => 'Original',
-            'slug' => 'original-upd-'.uniqid(),
-            'target_level' => LevelsConstants::MIDDLE,
-            'current_level' => LevelsConstants::UNSETTED,
-            'how_to_call_me' => null,
-            'use_name_to_call_me' => true,
-            'mentor_persona' => MentorPersonaConstants::NEUTRAL,
-        ]);
+        $mentor = $this->createMentor($this->user, ['name' => 'Original']);
 
         $payload = [
             'name' => 'Updated Name',
@@ -217,17 +203,7 @@ class MentorControllerTest extends TestCase
     public function test_update_returns_404_when_mentor_belongs_to_another_user(): void
     {
         $otherUser = $this->createVerifiedUser(['email' => 'other-upd@example.com']);
-        $mentor = MentorModel::query()->create([
-            'user_id' => $otherUser->id,
-            'track_id' => $this->track->id,
-            'name' => 'Other',
-            'slug' => 'other-upd-'.uniqid(),
-            'target_level' => LevelsConstants::MIDDLE,
-            'current_level' => LevelsConstants::UNSETTED,
-            'how_to_call_me' => null,
-            'use_name_to_call_me' => true,
-            'mentor_persona' => MentorPersonaConstants::NEUTRAL,
-        ]);
+        $mentor = $this->createMentor($otherUser, ['name' => 'Other']);
 
         $response = $this->actingAs($this->user)->putJson(self::MENTORS_API . '/' . $mentor->id, [
             'name' => 'Hacked',
@@ -243,17 +219,7 @@ class MentorControllerTest extends TestCase
 
     public function test_destroy_deletes_mentor_when_owned_by_user(): void
     {
-        $mentor = MentorModel::query()->create([
-            'user_id' => $this->user->id,
-            'track_id' => $this->track->id,
-            'name' => 'To Delete',
-            'slug' => 'to-delete-'.uniqid(),
-            'target_level' => LevelsConstants::MIDDLE,
-            'current_level' => LevelsConstants::UNSETTED,
-            'how_to_call_me' => null,
-            'use_name_to_call_me' => true,
-            'mentor_persona' => MentorPersonaConstants::NEUTRAL,
-        ]);
+        $mentor = $this->createMentor($this->user, ['name' => 'To Delete']);
 
         $response = $this->actingAs($this->user)->deleteJson(self::MENTORS_API . '/' . $mentor->id);
 
@@ -264,17 +230,7 @@ class MentorControllerTest extends TestCase
     public function test_destroy_returns_404_when_mentor_belongs_to_another_user(): void
     {
         $otherUser = $this->createVerifiedUser(['email' => 'other-del@example.com']);
-        $mentor = MentorModel::query()->create([
-            'user_id' => $otherUser->id,
-            'track_id' => $this->track->id,
-            'name' => 'Other Delete',
-            'slug' => 'other-del-'.uniqid(),
-            'target_level' => LevelsConstants::MIDDLE,
-            'current_level' => LevelsConstants::UNSETTED,
-            'how_to_call_me' => null,
-            'use_name_to_call_me' => true,
-            'mentor_persona' => MentorPersonaConstants::NEUTRAL,
-        ]);
+        $mentor = $this->createMentor($otherUser, ['name' => 'Other Delete']);
 
         $response = $this->actingAs($this->user)->deleteJson(self::MENTORS_API . '/' . $mentor->id);
 

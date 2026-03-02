@@ -49,7 +49,7 @@ class VerifyEmailActionTest extends TestCase
 
         $this->domainUser = $this->createUserAction->run($requestData);
         $this->user = UserModel::query()->findOrFail($this->domainUser->id);
-        $this->hash = sha1($this->domainUser->email);
+        $this->hash = hash('sha256', $this->domainUser->email);
     }
 
     public function test_it_verifies_email_successfully(): void
@@ -107,15 +107,15 @@ class VerifyEmailActionTest extends TestCase
         } catch (EmailAlreadyVerifiedException $e) {
         }
 
-        $this->assertEquals($tokensBefore, $this->user->tokens()->count());
+        $this->assertSame($tokensBefore, $this->user->tokens()->count());
     }
 
     public function test_it_creates_token_only_on_first_verification(): void
     {
-        $this->assertEquals(0, $this->user->tokens()->count());
+        $this->assertSame(0, $this->user->tokens()->count());
 
         $this->action->run($this->domainUser->id, $this->hash);
-        $this->assertEquals(1, $this->user->tokens()->count());
+        $this->assertSame(1, $this->user->tokens()->count());
 
         $this->user->refresh();
 
@@ -124,6 +124,6 @@ class VerifyEmailActionTest extends TestCase
         } catch (EmailAlreadyVerifiedException $e) {
         }
 
-        $this->assertEquals(1, $this->user->tokens()->count());
+        $this->assertSame(1, $this->user->tokens()->count());
     }
 }

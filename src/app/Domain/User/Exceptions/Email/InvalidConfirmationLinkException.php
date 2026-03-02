@@ -9,5 +9,5 @@ use App\Support\Http\HttpCode;
 
 final class InvalidConfirmationLinkException extends ApiException
 {
-    protected HttpCode $statusCode = HttpCode::BadRequest;
+    protected HttpCode $statusCode = HttpCode::Forbidden;
 }

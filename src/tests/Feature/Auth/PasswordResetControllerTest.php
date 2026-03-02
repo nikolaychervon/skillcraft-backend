@@ -75,16 +75,18 @@ class PasswordResetControllerTest extends TestCase
 
     public function test_it_validates_email_on_forgot_password(): void
     {
-        $this->postJson(self::FORGOT_PASSWORD_API, ['email' => 'not-an-email'])
-            ->assertStatus(422)
-            ->assertJsonValidationErrors(['email']);
+        $this->assertApiValidationErrors(
+            $this->postJson(self::FORGOT_PASSWORD_API, ['email' => 'not-an-email']),
+            ['email']
+        );
     }
 
     public function test_it_requires_email_on_forgot_password(): void
     {
-        $this->postJson(self::FORGOT_PASSWORD_API, [])
-            ->assertStatus(422)
-            ->assertJsonValidationErrors(['email']);
+        $this->assertApiValidationErrors(
+            $this->postJson(self::FORGOT_PASSWORD_API, []),
+            ['email']
+        );
     }
 
     public function test_it_rate_limits_forgot_password_requests(): void
@@ -146,9 +148,10 @@ class PasswordResetControllerTest extends TestCase
     #[DataProvider('resetValidationProvider')]
     public function test_it_validates_reset_password_request(array $payload, array $expectedErrors): void
     {
-        $response = $this->postJson(self::RESET_PASSWORD_API, $payload);
-
-        $response->assertStatus(422)->assertJsonValidationErrors($expectedErrors);
+        $this->assertApiValidationErrors(
+            $this->postJson(self::RESET_PASSWORD_API, $payload),
+            $expectedErrors
+        );
     }
 
     /** @return array<string, array{0: array<string, string>, 1: array<int, string>}> */

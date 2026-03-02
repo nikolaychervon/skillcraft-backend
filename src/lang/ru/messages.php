@@ -10,6 +10,7 @@ return [
     'profile-updated' => 'Профиль обновлён',
     'password-changed' => 'Пароль обновлён',
     'email-change-confirmed' => 'Email успешно изменён и подтверждён',
+    'internal-error' => 'Внутренняя ошибка сервера',
 
     'mentor' => [
         'created' => 'Ментор успешно создан.',
