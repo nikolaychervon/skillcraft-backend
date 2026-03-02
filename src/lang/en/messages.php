@@ -11,5 +11,9 @@ return [
     'password-changed' => 'Password updated',
     'email-change-confirmed' => 'Email successfully changed and confirmed',
 
-    'mentor-created' => 'Ментор успешно создан.',
+    'mentor' => [
+        'created' => 'Mentor successfully created.',
+        'updated' => 'Mentor successfully updated.',
+        'deleted' => 'Mentor successfully deleted.',
+    ],
 ];

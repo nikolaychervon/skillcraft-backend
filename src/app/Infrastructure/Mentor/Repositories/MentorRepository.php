@@ -44,4 +44,12 @@ final class MentorRepository implements MentorRepositoryInterface
 
         return $this->mapper->toDomain($mentorModel);
     }
+
+    public function delete(int $id): void
+    {
+        $model = MentorModel::query()->find($id);
+        if ($model !== null) {
+            $model->delete();
+        }
+    }
 }

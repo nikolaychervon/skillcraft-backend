@@ -38,4 +38,9 @@ final class CachedMentorRepository implements MentorRepositoryInterface
     {
         return $this->mentorRepository->create($data);
     }
+
+    public function delete(int $id): void
+    {
+        $this->mentorRepository->delete($id);
+    }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Mentor;
 
 use App\Application\Mentor\CreateNewMentor;
+use App\Application\Mentor\DeleteMentor;
 use App\Application\Mentor\GetMentor;
 use App\Application\Mentor\GetUserMentors;
 use App\Domain\Mentor\RequestData\CreateNewMentorRequestData;
@@ -34,7 +35,7 @@ final class MentorController extends Controller
         $mentor = $createNewMentor->run($requestData, $request->getDomainUser()->id);
 
         return ApiResponse::success(
-            message: __('messages.mentor-created'),
+            message: __('messages.mentor.created'),
             data: MentorResource::make($mentor),
             code: HttpCode::Created,
         );
@@ -53,10 +54,13 @@ final class MentorController extends Controller
         return response()->json([]);
     }
 
-    public function destroy(Mentor $mentor): JsonResponse
+    public function destroy(AuthenticatedRequest $request, int $mentorId, DeleteMentor $deleteMentor): JsonResponse
     {
-        $this->authorize('delete', $mentor);
+        $deleteMentor->run($mentorId, $request->getDomainUser()->id);
 
-        return response()->json([]);
+        return ApiResponse::success(
+            message: __('messages.mentor.deleted'),
+            code: HttpCode::NoContent
+        );
     }
 }

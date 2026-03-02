@@ -11,5 +11,9 @@ return [
     'password-changed' => 'Пароль обновлён',
     'email-change-confirmed' => 'Email успешно изменён и подтверждён',
 
-    'mentor-created' => 'Ментор успешно создан.',
+    'mentor' => [
+        'created' => 'Ментор успешно создан.',
+        'updated' => 'Ментор успешно обновлен.',
+        'deleted' => 'Ментор успешно удален.',
+    ],
 ];
